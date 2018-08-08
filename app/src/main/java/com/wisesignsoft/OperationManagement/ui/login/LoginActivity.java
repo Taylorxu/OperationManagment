@@ -23,6 +23,7 @@ import com.wisesignsoft.OperationManagement.mview.LoadingView;
 import com.wisesignsoft.OperationManagement.net.response.LoginResponse;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
+import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
 import com.wisesignsoft.OperationManagement.utils.GsonHelper;
 import com.wisesignsoft.OperationManagement.utils.ToastUtil;
 
@@ -123,6 +124,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         loadingView.stop(loadingView);
+                        EEMsgToastHelper.newInstance().selectWitch(t.getMessage());
                     }
                 });
 
