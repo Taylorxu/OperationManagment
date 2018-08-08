@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_boot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/c2"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_boot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/boot" />
+
+    <!--<TextView-->
+        <!--android:id="@+id/tv_boot1"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/iv_boot"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:text="@string/boot1"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:textSize="25sp" />-->
+
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/tv_boot1"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:text="@string/boot2"-->
+        <!--android:textColor="@color/c3"-->
+        <!--android:textSize="15sp" />-->
+
+</LinearLayout>

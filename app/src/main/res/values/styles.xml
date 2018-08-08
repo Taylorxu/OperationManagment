@@ -1,0 +1,79 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="LoginTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/c2</item>
+        <item name="android:listDivider">@drawable/shape_line</item>
+    </style>
+
+    <style name="ContractTextStyle">
+        <item name="android:textColor">@color/c5</item>
+        <item name="android:textSize">21sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CheckBoxDialogTheme" parent="android:Theme.Dialog">
+        <!-- 背景颜色及透明程度 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 是否有标题 -->
+        <item name="android:windowNoTitle">false</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否模糊 -->
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowFrame">@null</item>
+    </style>
+
+    <style name="LoadingStyle" parent="Animation.AppCompat.Dialog">
+        <item name="android:windowBackground">@drawable/shape_round</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
+
+    <!--控件封装的颜色字体-->
+    <style name="TitleViewColorSize">
+        <item name="android:textColor">@color/c4</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="ContentViewColorSize">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/c5</item>
+    </style>
+    <style name="popwin_anim_style">
+        <item name="android:windowEnterAnimation">@anim/slide_in_to_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_to_buttom</item>
+    </style>
+    <style name="add_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@color/c2</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:windowEnterAnimation">@anim/slide_in_to_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_to_buttom</item>
+    </style>
+    <style name="my_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@drawable/shape_round</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
+
+    <style name="MyCheckBox" parent="LoginTheme">
+        <item name="colorControlNormal">@color/gray_normal</item>
+        <item name="colorControlActivated">@color/c1</item>
+    </style>
+
+</resources>
