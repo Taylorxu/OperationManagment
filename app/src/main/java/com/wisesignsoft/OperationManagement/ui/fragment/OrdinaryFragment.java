@@ -238,28 +238,7 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
                 ApiService.Creator.get().updateUserSta(RequestBody.getgEnvelope(Protocol.user_name_space, list, Protocol.updateUserPos)).enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        User user = MySharedpreferences.getUser();
-                        if (statue == 1) {
-                            user.setStatue(1);
-                            MySharedpreferences.putUser(user);
-                            if (models.size() > 0) {
-                                for (OrdinaryModel bean : models) {
-                                    if (bean.getName().equals("更改状态")) {
-                                        bean.setReId(R.mipmap.state_false);
-                                    }
-                                }
-                            }
-                        } else {
-                            user.setStatue(0);
-                            MySharedpreferences.putUser(user);
-                            if (models.size() > 0) {
-                                for (OrdinaryModel bean : models) {
-                                    if (bean.getName().equals("更改状态")) {
-                                        bean.setReId(R.mipmap.changestate);
-                                    }
-                                }
-                            }
-                        }
+                        changeStateData(statue);
                         adapter.notifyDataSetChanged();
                         loadingView.stop(loadingView);
                     }
@@ -272,6 +251,28 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
             }
         });
         myDialog.show();
+    }
+
+    /**
+     * 修改状态 调用接口返回后更新adapter 里数据的状态
+     *
+     * @param state
+     */
+    public void changeStateData(int state) {
+        User user = MySharedpreferences.getUser();
+        user.setStatue(state);
+        MySharedpreferences.putUser(user);
+        if (models.size() > 0) {
+            for (OrdinaryModel bean : models) {
+                if (bean.getName().equals("更改状态")) {
+                    if (state == 1) {
+                        bean.setReId(R.mipmap.state_false);
+                    } else {
+                        bean.setReId(R.mipmap.changestate);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -305,24 +306,12 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
                 if (response.body() != null) {
                     QueryValidUsersByAccountResponse result = GsonHelper.build().getObjectByJson(response.body(), QueryValidUsersByAccountResponse.class);
                     String stute = result.getReturnValue().getUserState();
-                    User user = MySharedpreferences.getUser();
                     if ("1".equals(stute)) {
-                        user.setStatue(1);
-                        for (OrdinaryModel bean : models) {
-                            if (bean.getName().equals("更改状态")) {
-                                bean.setReId(R.mipmap.state_false);
-                            }
-                        }
+                        changeStateData(1);
                     } else {
-                        user.setStatue(0);
-                        for (OrdinaryModel bean : models) {
-                            if (bean.getName().equals("更改状态")) {
-                                bean.setReId(R.mipmap.changestate);
-                            }
-                        }
+                        changeStateData(2);
                     }
                     adapter.notifyDataSetChanged();
-                    MySharedpreferences.putUser(user);
                 }
             }
 
