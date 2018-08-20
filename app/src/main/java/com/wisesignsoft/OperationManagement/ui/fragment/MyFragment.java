@@ -30,6 +30,14 @@ public class MyFragment extends BaseFragment implements MySwitch.SwitchClickList
     private TextView tv_version;
     private RelativeLayout tv_exit;
 
+    public static MyFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        MyFragment fragment = new MyFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

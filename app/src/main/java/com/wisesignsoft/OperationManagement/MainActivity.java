@@ -32,13 +32,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Toast toast;
     private MyTitle mt_main;
     private FrameLayout fl_main;
-    private OrdinaryFragment ordinaryFragment;
-    private MapFragment mapFragment;
-    private MessageFragment messageFragment;
-    private ContactFragment contactFragment;
-    private MyFragment myFragment;
     private FragmentManager manager;
-    private List<Fragment> list;
+    private Fragment[] fragmentList = new Fragment[]{OrdinaryFragment.newInstance(), MapFragment.newInstance(),
+            MessageFragment.newInstance(), ContactFragment.newInstance(), MyFragment.newInstance()};
 
 
     @Override
@@ -46,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        //TODO 上送地理位置
     }
 
     private void initView() {
@@ -56,20 +53,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sv_contact = (SelectorView) findViewById(R.id.sv_main_contact);
         sv_my = (SelectorView) findViewById(R.id.sv_main_my);
 
-        ordinaryFragment = new OrdinaryFragment();
-        mapFragment = new MapFragment();
-        messageFragment = new MessageFragment();
-        contactFragment = new ContactFragment();
-        myFragment = new MyFragment();
-        list = new ArrayList<>();
-        list.add(ordinaryFragment);
-        list.add(mapFragment);
-        list.add(messageFragment);
-        list.add(contactFragment);
-        list.add(myFragment);
         manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        for (Fragment fragment : list) {
+        for (Fragment fragment : fragmentList) {
             transaction.add(R.id.fl_main, fragment);
         }
         transaction.commit();
@@ -115,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sv_my.setSelect(false);
         sv_my.setEnabled(true);
         FragmentTransaction transaction = manager.beginTransaction();
-        for (Fragment fragment : list) {
+        for (Fragment fragment : fragmentList) {
             transaction.hide(fragment);
         }
         transaction.commit();
@@ -127,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sv_home.setEnabled(false);
         mt_main.setTitle(getResources().getString(R.string.homed));
         mt_main.setIvRight(true, R.mipmap.map, ordinaryListener);
-        manager.beginTransaction().show(ordinaryFragment).commit();
+        manager.beginTransaction().show(fragmentList[0]).commit();
     }
 
     private void selectMap() {
@@ -135,8 +121,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sv_home.setEnabled(false);
         mt_main.setTitle(getResources().getString(R.string.map));
         mt_main.setIvRight(true, R.mipmap.menu, mapListener);
-        manager.beginTransaction().show(mapFragment).commit();
-        mapFragment.onStart();
+        manager.beginTransaction().show(fragmentList[1]).commit();
+        fragmentList[1].onStart();
     }
 
     private void selectMessage() {
@@ -145,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sv_message.setEnabled(false);
         mt_main.setTitle(getResources().getString(R.string.message));
         mt_main.setIvRight(false, -1, null);
-        manager.beginTransaction().show(messageFragment).commit();
+        manager.beginTransaction().show(fragmentList[2]).commit();
     }
 
     private void selectContact() {
@@ -154,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sv_contact.setEnabled(false);
         mt_main.setTitle("联系人列表");
         mt_main.setIvRight(false, -1, null);
-        manager.beginTransaction().show(contactFragment).commit();
+        manager.beginTransaction().show(fragmentList[2]).commit();
     }
 
     private void selectMy() {
@@ -163,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sv_my.setEnabled(false);
         mt_main.setTitle(getResources().getString(R.string.my));
         mt_main.setIvRight(false, -1, null);
-        manager.beginTransaction().show(myFragment).commit();
+        manager.beginTransaction().show(fragmentList[3]).commit();
     }
 
     private View.OnClickListener ordinaryListener = new View.OnClickListener() {
@@ -203,8 +189,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
 
-    }
 }

@@ -14,9 +14,13 @@ import com.wisesignsoft.OperationManagement.R;
  */
 public class MapFragment extends Fragment {
 
+    public static MapFragment newInstance() {
 
-    public MapFragment() {
-        // Required empty public constructor
+        Bundle args = new Bundle();
+
+        MapFragment fragment = new MapFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
 

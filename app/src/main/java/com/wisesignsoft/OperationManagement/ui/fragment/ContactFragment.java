@@ -14,9 +14,13 @@ import com.wisesignsoft.OperationManagement.R;
  */
 public class ContactFragment extends Fragment {
 
-
-    public ContactFragment() {
-        // Required empty public constructor
+    public static ContactFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        ContactFragment fragment = new ContactFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
 

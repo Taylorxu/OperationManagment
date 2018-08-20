@@ -13,12 +13,14 @@ import com.wisesignsoft.OperationManagement.R;
  * A simple {@link Fragment} subclass.
  */
 public class MessageFragment extends Fragment {
+    public static MessageFragment newInstance() {
 
+        Bundle args = new Bundle();
 
-    public MessageFragment() {
-        // Required empty public constructor
+        MessageFragment fragment = new MessageFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -24,6 +24,18 @@ public interface ApiService {
     @POST(Protocol.yxyw_host)
     Call<String> login(@Body String requestStr);
 
+    @POST(Protocol.yxyw_host)
+    Call<String> queryUserResource(@Body String requestStr);
+
+    @POST(Protocol.yxyw_host)
+    Call<String> queryValidUsersByAccount(@Body String requestStr);
+
+    @POST(Protocol.yxyw_host)
+    Call<String> queryUnhandleProcessCount(@Body String requestStr);
+
+    @POST(Protocol.user_host)
+    Call<String> updateUserSta(@Body String requestStr);
+
     class Creator {
         private static Strategy strategy = new AnnotationStrategy();
         private static Serializer serializer = new Persister(strategy);
