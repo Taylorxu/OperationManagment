@@ -30,6 +30,7 @@ import com.wisesignsoft.OperationManagement.net.response.QueryUserResourceRespon
 import com.wisesignsoft.OperationManagement.net.response.QueryValidUsersByAccountResponse;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
+import com.wisesignsoft.OperationManagement.ui.activity.SolvingActivity;
 import com.wisesignsoft.OperationManagement.utils.GsonHelper;
 import com.wisesignsoft.OperationManagement.utils.OrdinaryUtil;
 
@@ -276,19 +277,19 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-      /*  Intent intent;
+        Intent intent;
         switch (view.getId()) {
             case R.id.rl_ordinary_solving:
                 intent = new Intent();
                 intent.setClass(getActivity(), SolvingActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.rl_ordinary_solved:
+           /* case R.id.rl_ordinary_solved:
                 intent = new Intent();
                 intent.setClass(getActivity(), SovledActivity.class);
                 startActivity(intent);
-                break;
-        }*/
+                break;*/
+        }
     }
 
     /**

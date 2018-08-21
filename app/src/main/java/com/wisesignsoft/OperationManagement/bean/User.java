@@ -71,7 +71,6 @@ public class User extends RealmObject {
         User user = realm.where(User.class).equalTo("userId", userid).findFirst();
         user.setStatue(state);
         realm.commitTransaction();
-        LogUtil.log(user.getStatue() + "++++++++++++++++++++++++++++++++++++");
     }
 
     public static void clearUser() {

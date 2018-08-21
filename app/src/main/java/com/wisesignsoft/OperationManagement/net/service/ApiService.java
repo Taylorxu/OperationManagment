@@ -2,14 +2,21 @@ package com.wisesignsoft.OperationManagement.net.service;
 
 
 import com.wisesignsoft.OperationManagement.Protocol;
+import com.wisesignsoft.OperationManagement.bean.TaskItem;
+import com.wisesignsoft.OperationManagement.net.response.BaseListDataResponse;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.convert.AnnotationStrategy;
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.strategy.Strategy;
 
+import java.util.List;
+
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
@@ -33,8 +40,24 @@ public interface ApiService {
     @POST(Protocol.yxyw_host)
     Call<String> queryUnhandleProcessCount(@Body String requestStr);
 
+    /**
+     * 修改用户的闲忙状态
+     *
+     * @param requestStr
+     * @return
+     */
     @POST(Protocol.user_host)
     Call<String> updateUserSta(@Body String requestStr);
+
+    /**
+     * 获取待处理
+     *
+     * @param requestStr
+     * @return
+     */
+    @POST(Protocol.yxyw_host)
+    rx.Observable<Response<BaseListDataResponse<List<TaskItem>>>> findUnhandleProcess(@Body String requestStr);
+
 
     class Creator {
         private static Strategy strategy = new AnnotationStrategy();
@@ -59,6 +82,8 @@ public interface ApiService {
                     .baseUrl(Protocol.getHostUrl())
                     .client(NetConfig.getInstance().getClient())
                     .addConverterFactory(new ToStringConverterFactory())
+                    .addConverterFactory(GsonConverterFactory.create(NetConfig.getInstance().getGson()))
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .build();
         }
     }

@@ -32,4 +32,7 @@ public class BaseResponse {
     public void setReturnState(String returnState) {
         this.returnState = returnState;
     }
+    public Error getError() {
+        return new Error(Integer.decode(getReturnState()), returnMsg);
+    }
 }
