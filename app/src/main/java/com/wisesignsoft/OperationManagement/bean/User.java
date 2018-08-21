@@ -1,12 +1,20 @@
 package com.wisesignsoft.OperationManagement.bean;
 
+import com.wisesignsoft.OperationManagement.utils.LogUtil;
+
+import io.realm.Realm;
+import io.realm.RealmObject;
+import io.realm.RealmResults;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by ycs on 2016/11/18.
  */
 
-public class User {
+public class User extends RealmObject {
     private String username;
     private String password;
+    @PrimaryKey
     private String userId;
     private int statue;
 
@@ -40,5 +48,40 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public static User getUserFromRealm() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        User results = realm.where(User.class).findFirst();
+        realm.commitTransaction();
+        return results;
+    }
+
+    public static void updateUser(User userp) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(userp);
+        realm.commitTransaction();
+    }
+
+    public static void updateUserState(String userid, int state) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        User user = realm.where(User.class).equalTo("userId", userid).findFirst();
+        user.setStatue(state);
+        realm.commitTransaction();
+        LogUtil.log(user.getStatue() + "++++++++++++++++++++++++++++++++++++");
+    }
+
+    public static void clearUser() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                final RealmResults<User> results = realm.where(User.class).findAll();
+                results.deleteAllFromRealm();
+            }
+        });
     }
 }

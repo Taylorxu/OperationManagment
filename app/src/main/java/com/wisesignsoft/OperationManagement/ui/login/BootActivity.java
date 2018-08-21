@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.wisesignsoft.OperationManagement.BaseActivity;
 import com.wisesignsoft.OperationManagement.MainActivity;
 import com.wisesignsoft.OperationManagement.R;
+import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
 
 
@@ -44,7 +45,7 @@ public class BootActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animator animator) {
-                if (MySharedpreferences.getLoginStatusBoolean()) {
+                if (User.getUserFromRealm() != null) {
                     toMain();
                 } else {
                     toLogin();

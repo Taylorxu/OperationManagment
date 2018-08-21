@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.wisesignsoft.OperationManagement.BaseFragment;
 import com.wisesignsoft.OperationManagement.MainActivity;
 import com.wisesignsoft.OperationManagement.R;
+import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
 import com.wisesignsoft.OperationManagement.mview.MyDialog;
 import com.wisesignsoft.OperationManagement.mview.MySwitch;
@@ -84,6 +85,7 @@ public class MyFragment extends BaseFragment implements MySwitch.SwitchClickList
                     @Override
                     public void setMyDialog() {
                         MySharedpreferences.clear();
+                        User.clearUser();
                         Intent intent = new Intent(getActivity(), LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

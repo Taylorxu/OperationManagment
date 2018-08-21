@@ -2,6 +2,7 @@ package com.wisesignsoft.OperationManagement.utils;
 
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.OrdinaryModel;
+import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
 import com.wisesignsoft.OperationManagement.net.response.QueryUserResourceResponse;
 
@@ -57,7 +58,7 @@ public class OrdinaryUtil {
             case "SR_PROCESS":   //服务报告处理
                 break;
             case "CHANGE_STATUS":   //更改状态
-                int statue = MySharedpreferences.getUser().getStatue();
+                int statue = User.getUserFromRealm().getStatue();
                 if (statue == 0) {
                     reId = R.mipmap.state_false;
                 } else {

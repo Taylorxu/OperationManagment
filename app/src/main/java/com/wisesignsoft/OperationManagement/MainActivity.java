@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sv_contact.setEnabled(false);
         mt_main.setTitle("联系人列表");
         mt_main.setIvRight(false, -1, null);
-        manager.beginTransaction().show(fragmentList[2]).commit();
+        manager.beginTransaction().show(fragmentList[3]).commit();
     }
 
     private void selectMy() {
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sv_my.setEnabled(false);
         mt_main.setTitle(getResources().getString(R.string.my));
         mt_main.setIvRight(false, -1, null);
-        manager.beginTransaction().show(fragmentList[3]).commit();
+        manager.beginTransaction().show(fragmentList[4]).commit();
     }
 
     private View.OnClickListener ordinaryListener = new View.OnClickListener() {

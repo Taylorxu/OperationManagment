@@ -86,7 +86,7 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
         loadingView = LoadingView.getLoadingView(getContext());
         loadingView.show();
         final List<String> list = new ArrayList<>();
-        list.add(MySharedpreferences.getUser().getUsername());
+        list.add(User.getUserFromRealm().getUsername());
         ApiService.Creator.get().queryUserResource(RequestBody.getgEnvelope(Protocol.yxyw_name_space, list, Protocol.queryUserResource))
                 .enqueue(new Callback<String>() {
                     @Override
@@ -217,7 +217,7 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
         1   闲
      */
     private void updateStatue() {
-        int statue = MySharedpreferences.getUser().getStatue();
+        int statue = User.getUserFromRealm().getStatue();
         if (statue == 0) {
             setStatue(1, "设置状态为闲");
         } else {
@@ -233,7 +233,7 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
                 final LoadingView loadingView = LoadingView.getLoadingView(getContext());
                 loadingView.show();
                 List<String> list = new ArrayList<>();
-                list.add(MySharedpreferences.getUser().getUsername());
+                list.add(User.getUserFromRealm().getUsername());
                 list.add(statue + "");
                 ApiService.Creator.get().updateUserSta(RequestBody.getgEnvelope(Protocol.user_name_space, list, Protocol.updateUserPos)).enqueue(new Callback<String>() {
                     @Override
@@ -259,9 +259,8 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
      * @param state
      */
     public void changeStateData(int state) {
-        User user = MySharedpreferences.getUser();
-        user.setStatue(state);
-        MySharedpreferences.putUser(user);
+        User.updateUserState(User.getUserFromRealm().getUserId(), state);
+
         if (models.size() > 0) {
             for (OrdinaryModel bean : models) {
                 if (bean.getName().equals("更改状态")) {
@@ -309,7 +308,7 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
                     if ("1".equals(stute)) {
                         changeStateData(1);
                     } else {
-                        changeStateData(2);
+                        changeStateData(0);
                     }
                     adapter.notifyDataSetChanged();
                 }

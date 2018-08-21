@@ -30,6 +30,7 @@ import com.wisesignsoft.OperationManagement.utils.ToastUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -106,14 +107,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        LoginResponse result = GsonHelper.build().getObjectByJson(response.body(), LoginResponse.class);
+                        final LoginResponse result = GsonHelper.build().getObjectByJson(response.body(), LoginResponse.class);
                         if (result.returnState.equals("-1")) {
                             ToastUtil.showMessage(getBaseContext(), result.getReturnMsg());
                         } else {
-                            User user = new User();
-                            user.setUserId(result.getReturnValue().getUserId());
-                            user.setUsername(phone);
-                            MySharedpreferences.putUser(user);
+                            Realm realm = Realm.getDefaultInstance();
+                            realm.executeTransactionAsync(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    User user = new User();
+                                    user.setUserId(result.getReturnValue().getUserId());
+                                    user.setUsername(phone);
+                                    user.setStatue(0);
+                                    realm.copyToRealmOrUpdate(user);
+                                }
+                            });
                             MySharedpreferences.putStatusBoolean(Constant.ISLOGIN, true);
                             MySharedpreferences.putMapStatusBoolean(true);
                             toMain();
