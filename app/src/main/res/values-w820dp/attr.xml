@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="keyText" format="string" />
+    <attr name="keyColor" format="color" />
+    <attr name="keySize" format="dimension" />
+    <attr name="valueText" format="string" />
+    <attr name="valueColor" format="color" />
+    <attr name="valueSize" format="dimension" />
+    <declare-styleable name="KeyValueView">
+        <attr name="keyText" />
+        <attr name="keyColor" />
+        <attr name="keySize" />
+        <attr name="valueText" />
+        <attr name="valueColor" />
+        <attr name="valueSize" />
+    </declare-styleable>
+</resources>

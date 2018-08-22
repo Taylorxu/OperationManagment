@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:id="@+id/tv_single_text"
+        style="@style/TitleViewColorSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="问题流程*" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@drawable/shape_round_hui">
+
+        <EditText
+            android:id="@+id/et_single_text"
+            style="@style/ContentViewColorSize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:paddingLeft="6dp" />
+    </RelativeLayout>
+</LinearLayout>

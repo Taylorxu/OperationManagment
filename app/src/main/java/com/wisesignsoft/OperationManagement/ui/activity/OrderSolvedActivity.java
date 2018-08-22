@@ -1,5 +1,7 @@
 package com.wisesignsoft.OperationManagement.ui.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +9,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -118,11 +122,30 @@ public class OrderSolvedActivity extends BaseActivity {
 
                     @Override
                     public void onNext(TaskDetailBean taskDetailBean) {
-                        loadingView.stop(loadingView);
+                        crossfade();
                         List datas = PullPaseXmlUtil.pase(taskDetailBean.getFormDocument());
                         wodv_solved.setData(datas, OrderSolvedActivity.this);
                     }
                 });
+    }
+
+    public void crossfade() {
+        wodv_solved.ll_work_order_detail.setAlpha(0f);
+        wodv_solved.ll_work_order_detail.setVisibility(View.VISIBLE);
+        wodv_solved.ll_work_order_detail.animate().alpha(1f)
+                .setDuration(1000)
+                .setListener(null);
+
+        loadingView.rootView.animate()
+                .alpha(0f)
+                .setDuration(500)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        loadingView.stop(loadingView);
+                    }
+                });
+
     }
 
     public void commit() {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_marginTop="15dp"
+        android:id="@+id/tv_text_field"
+        style="@style/TitleViewColorSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="问题哈和*" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/shape_round_hui">
+
+        <EditText
+            android:padding="6dp"
+            android:id="@+id/et_text_field"
+            style="@style/ContentViewColorSize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:gravity="left|top" />
+    </RelativeLayout>
+</LinearLayout>

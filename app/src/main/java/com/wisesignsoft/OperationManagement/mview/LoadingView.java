@@ -17,6 +17,7 @@ import com.wisesignsoft.OperationManagement.R;
 
 public class LoadingView extends Dialog {
     private static LoadingView loadingView;
+    public static View rootView;
 
     private LoadingView(Context context, int themeResId) {
         super(context, themeResId);
@@ -34,11 +35,11 @@ public class LoadingView extends Dialog {
     }
 
     private void initView(Context context) {
-        View view = LayoutInflater.from(context).inflate(R.layout.loadingview, null);
-        ImageView iv_loading = (ImageView) view.findViewById(R.id.iv_loading);
+        rootView = LayoutInflater.from(context).inflate(R.layout.loadingview, null);
+        ImageView iv_loading = (ImageView) rootView.findViewById(R.id.iv_loading);
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.anim_loading);
         iv_loading.startAnimation(animation);
-        setContentView(view);
+        setContentView(rootView);
     }
 
     public void stop(LoadingView loadingView) {
