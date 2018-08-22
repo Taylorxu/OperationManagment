@@ -92,7 +92,7 @@ public class SolvingActivity extends BaseActivity implements SwipeRefreshLayout.
         adapter.setOnISolving(new SolvingAdapter.ISolving() {
             @Override
             public void setOnClick(String currentDealer, String pikey) {
-//                OrderSolvedActivity.startSelf(SolvingActivity.this, currentDealer, pikey);
+                OrderSolvedActivity.startSelf(SolvingActivity.this, currentDealer, pikey);
             }
         });
     }

@@ -4,6 +4,7 @@ package com.wisesignsoft.OperationManagement.net.service;
 import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.bean.AccountInfoBean;
 import com.wisesignsoft.OperationManagement.bean.ResourcesBean;
+import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
 import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
@@ -61,6 +62,15 @@ public interface ApiService {
      */
     @POST(Protocol.yxyw_host)
     Observable<Response<BaseDataResponse<List<TaskItemBean>>>> findUnhandleProcess(@Body String requestStr);
+
+    /**
+     * 工单流程详情请求
+     *
+     * @param requestStr
+     * @return
+     */
+    @POST(Protocol.process_host)
+    Observable<Response<TaskDetailBean>> openTaskDetail(@Body String requestStr);
 
 
     class Creator {

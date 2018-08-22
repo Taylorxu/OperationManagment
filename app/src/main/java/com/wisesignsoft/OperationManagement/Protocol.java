@@ -8,10 +8,10 @@ import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
  */
 
 public class Protocol {
-    private static final String test_url = getHostUrl();
+    public static final String test_url = getHostUrl();
     //测试
-//    private static final String test_url = "http://123.57.26.84:9180/IMS/";
-//    private static final String test_url = "http://124.205.209.4:9180/IMS/";
+//    public static final String test_url = "http://123.57.26.84:9180/IMS/";
+//    public static final String test_url = "http://124.205.209.4:9180/IMS/";
 
     /*获取url*/
     public static String getHostUrl() {
@@ -73,7 +73,7 @@ public class Protocol {
     public static final String queryValidUserBydept = "queryValidUserBydept";
     /*===================================process====================================*/
     /*process服务器*/
-    private static final String process_host = "services/ProcessService?wsdl";
+    public static final String process_host = "services/ProcessService?wsdl";
     /*process命名空间*/
     public static final String process_name_space = "http://process.extinterface.web.wisesign.cn/";
 
@@ -113,7 +113,7 @@ public class Protocol {
 
     /*=======================================dict=============================================*/
     /*dict服务器*/
-    private static final String dict_host = "services/DictService?wsdl";
+    public static final String dict_host = "services/DictService?wsdl";
     /*dict命名空间*/
     public static final String dict_name_space = "http://dict.extinterface.web.wisesign.cn/";
 
@@ -128,7 +128,7 @@ public class Protocol {
     public static final String queryAllValidDictDate = "queryAllValidDictDate";
     /*=========================================know============================================*/
     /*know服务器*/
-    private static final String know_host = "services/KnowService?wsdl";
+    public static final String know_host = "services/KnowService?wsdl";
     /*know命名空间*/
     public static final String know_name_space = "http://knowledge.extinterface.web.wisesign.cn/";
 
@@ -143,7 +143,7 @@ public class Protocol {
     public static final String openKnowDetail = "openKnowDetail";
     /*=========================================ci==========================================*/
     /*ci服务器*/
-    private static final String ci_host = "services/CiService?wsdl";
+    public static final String ci_host = "services/CiService?wsdl";
     /*ci命名空间*/
     public static final String ci_name_space = "http://ci.extinterface.web.wisesign.cn/";
 
@@ -174,7 +174,7 @@ public class Protocol {
     public static final String queryUserAuthById = "queryUserAuthById";
     /*====================================message===========================================*/
     /*message服务器*/
-    private static final String message_host = "services/MessageService?wsdl";
+    public static final String message_host = "services/MessageService?wsdl";
     /*message命名空间*/
     public static final String message_name_space = "http://msg.extinterface.web.wisesign.cn/";
 
@@ -191,7 +191,7 @@ public class Protocol {
     public static final String setMsgReaded = "setMsgReaded";
     /*====================================role============================================*/
     /*role服务器*/
-    private static final String role_host = "services/RoleService?wsdl";
+    public static final String role_host = "services/RoleService?wsdl";
     /*role命名空间*/
     public static final String role_name_space = "http://role.extinterface.web.wisesign.cn/";
 
@@ -208,7 +208,7 @@ public class Protocol {
     public static final String findUserByRoleId = "findUserByRoleId";
     /*====================================dept============================================*/
     /*dept服务器*/
-    private static final String dept_host = "services/DeptService?wsdl";
+    public static final String dept_host = "services/DeptService?wsdl";
     /*dept命名空间*/
     public static final String dept_name_space = "http://dept.extinterface.web.wisesign.cn/";
 
@@ -227,7 +227,7 @@ public class Protocol {
     public static final String findDeptByIds = "findDeptByIds";
     /*====================================attachment============================================*/
     /*attachment服务器*/
-    private static final String attachment_host = "services/AttachmentService?wsdl";
+    public static final String attachment_host = "services/AttachmentService?wsdl";
     /*attachment命名空间*/
     public static final String attachment_name_space = "http://attachment.extinterface.web.wisesign.cn/";
 
@@ -241,7 +241,7 @@ public class Protocol {
     /*根据附件ids查询附件信息*/
     public static final String queryAttchmentByIds = "queryAttchmentByIds";
     /*附件下载的方法*/
-    private static final String attachMentDownloadToMove = "AttachMentDownloadToMove";
+    public static final String attachMentDownloadToMove = "AttachMentDownloadToMove";
     /*根据附件ids查询附件信息*/
     public static final String findAttachmentInfo = "findAttachmentInfo";
     /*根据附件ids查询附件预览地址*/
@@ -254,7 +254,7 @@ public class Protocol {
 
     /*====================================business============================================*/
     /*business服务器*/
-    private static final String business_host = "services/BusinessService?wsdl";
+    public static final String business_host = "services/BusinessService?wsdl";
     /*business命名空间*/
     public static final String business_name_space = "http://cmdb.extinterface.web.wisesign.cn/";
 
@@ -268,7 +268,7 @@ public class Protocol {
 
     /*====================================岗位组件============================================*/
 
-    private static final String postService_host = "services/PostService?wsdl";
+    public static final String postService_host = "services/PostService?wsdl";
 
     public static final String post_name_space = "http://post.extinterface.web.wisesign.cn/";
 
