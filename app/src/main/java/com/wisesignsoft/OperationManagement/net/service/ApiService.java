@@ -2,8 +2,11 @@ package com.wisesignsoft.OperationManagement.net.service;
 
 
 import com.wisesignsoft.OperationManagement.Protocol;
-import com.wisesignsoft.OperationManagement.bean.TaskItem;
-import com.wisesignsoft.OperationManagement.net.response.BaseListDataResponse;
+import com.wisesignsoft.OperationManagement.bean.AccountInfoBean;
+import com.wisesignsoft.OperationManagement.bean.ResourcesBean;
+import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
+import com.wisesignsoft.OperationManagement.bean.User;
+import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.convert.AnnotationStrategy;
@@ -19,6 +22,7 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import rx.Observable;
 
 
 /**
@@ -29,16 +33,16 @@ import retrofit2.http.POST;
 public interface ApiService {
 
     @POST(Protocol.yxyw_host)
-    Call<String> login(@Body String requestStr);
+    Observable<Response<BaseDataResponse<User>>> login(@Body String requestStr);
 
     @POST(Protocol.yxyw_host)
-    Call<String> queryUserResource(@Body String requestStr);
+    Observable<Response<BaseDataResponse<List<ResourcesBean>>>> queryUserResource(@Body String requestStr);
 
     @POST(Protocol.yxyw_host)
-    Call<String> queryValidUsersByAccount(@Body String requestStr);
+    Observable<Response<BaseDataResponse<AccountInfoBean>>> queryValidUsersByAccount(@Body String requestStr);
 
     @POST(Protocol.yxyw_host)
-    Call<String> queryUnhandleProcessCount(@Body String requestStr);
+    Observable<Response<BaseDataResponse<String>>> queryUnhandleProcessCount(@Body String requestStr);
 
     /**
      * 修改用户的闲忙状态
@@ -56,7 +60,7 @@ public interface ApiService {
      * @return
      */
     @POST(Protocol.yxyw_host)
-    rx.Observable<Response<BaseListDataResponse<List<TaskItem>>>> findUnhandleProcess(@Body String requestStr);
+    Observable<Response<BaseDataResponse<List<TaskItemBean>>>> findUnhandleProcess(@Body String requestStr);
 
 
     class Creator {

@@ -10,28 +10,23 @@ import com.wisesignsoft.OperationManagement.BaseActivity;
 import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.adapter.SolvingAdapter;
-import com.wisesignsoft.OperationManagement.bean.TaskItem;
+import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
 import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.mview.EmptyView;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
 import com.wisesignsoft.OperationManagement.mview.RefreshRecyclerView;
 import com.wisesignsoft.OperationManagement.mview.SeachView;
-import com.wisesignsoft.OperationManagement.net.response.BaseListDataResponse;
+import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
-import com.wisesignsoft.OperationManagement.utils.GsonHelper;
+import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
 import com.wisesignsoft.OperationManagement.utils.SwipeRefreshUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import rx.Scheduler;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -48,7 +43,7 @@ public class SolvingActivity extends BaseActivity implements SwipeRefreshLayout.
     private String key = "";
     /*总数*/
     private String total;
-    private List<TaskItem> datas = new ArrayList<>();
+    private List<TaskItemBean> datas = new ArrayList<>();
     private EmptyView ev_solving;
     private LoadingView loadingView;
     private TextView tv_total;
@@ -124,8 +119,8 @@ public class SolvingActivity extends BaseActivity implements SwipeRefreshLayout.
         ApiService.Creator.get().findUnhandleProcess(RequestBody.getgEnvelope(Protocol.yxyw_name_space, param, Protocol.findUnhandleProcess))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(new FlatMapResponse<BaseListDataResponse<List<TaskItem>>>())
-                .subscribe(new Subscriber<BaseListDataResponse<List<TaskItem>>>() {
+                .flatMap(new FlatMapResponse<BaseDataResponse<List<TaskItemBean>>>())
+                .subscribe(new Subscriber<BaseDataResponse<List<TaskItemBean>>>() {
                     @Override
                     public void onCompleted() {
                         loadingView.stop(loadingView);
@@ -134,10 +129,11 @@ public class SolvingActivity extends BaseActivity implements SwipeRefreshLayout.
                     @Override
                     public void onError(Throwable e) {
                         loadingView.stop(loadingView);
+                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
                     }
 
                     @Override
-                    public void onNext(BaseListDataResponse<List<TaskItem>> dataResponse) {
+                    public void onNext(BaseDataResponse<List<TaskItemBean>> dataResponse) {
                         loadingView.stop(loadingView);
                         total = dataResponse.getTotal();
                         if (srl_solving.isRefreshing()) {

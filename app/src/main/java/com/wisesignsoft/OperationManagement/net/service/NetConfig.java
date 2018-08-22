@@ -71,7 +71,6 @@ public class NetConfig implements Interceptor, CookieJar {
         okhttp3.MediaType mediaType = response.body().contentType();
         if (null != mediaType && "text/xml;charset=UTF-8".equals(mediaType.toString())) {
             String content = response.body().string();
-            Log.e("response.body()---", content);
             if (content.indexOf("<soap:Fault>") > -1) {
                 return response;
             }
@@ -119,7 +118,6 @@ public class NetConfig implements Interceptor, CookieJar {
             Element rootElement = document.getRootElement();
             for (Iterator<Element> it = rootElement.elementIterator(); it.hasNext(); ) {
                 Element el = it.next();
-                Log.e("treeWalk", el.getName() + "---------" + el.getStringValue());
                 returnResult = el.getStringValue();
             }
         } catch (DocumentException e) {

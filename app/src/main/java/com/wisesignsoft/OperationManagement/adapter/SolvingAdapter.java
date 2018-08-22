@@ -8,17 +8,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wisesignsoft.OperationManagement.R;
-import com.wisesignsoft.OperationManagement.bean.TaskItem;
+import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
 
 import java.util.List;
  
 
 public class SolvingAdapter extends RecyclerView.Adapter {
     private Context context;
-    private List<TaskItem> datas;
+    private List<TaskItemBean> datas;
     private ISolving iSolving;
 
-    public SolvingAdapter(Context context, List<TaskItem> datas) {
+    public SolvingAdapter(Context context, List<TaskItemBean> datas) {
         this.context = context;
         this.datas = datas;
     }
@@ -55,7 +55,7 @@ public class SolvingAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MyHolder) {
-            final TaskItem bean = datas.get(position);
+            final TaskItemBean bean = datas.get(position);
             ((MyHolder) holder).tv_solving_code.setText(bean.getTITLE() + "(" + bean.getPIKEY() + ")");
             ((MyHolder) holder).tv_solving_time.setText(bean.getCREATEDATE());
             ((MyHolder) holder).tv_solving_identity.setText(bean.getCREATOR());

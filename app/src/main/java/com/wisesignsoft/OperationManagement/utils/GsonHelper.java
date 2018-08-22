@@ -1,10 +1,6 @@
 package com.wisesignsoft.OperationManagement.utils;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.wisesignsoft.OperationManagement.net.response.BaseListDataResponse;
-
-import java.util.List;
 
 public class GsonHelper {
     public static GsonHelper gsonHelper = null;

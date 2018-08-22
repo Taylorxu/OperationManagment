@@ -20,6 +20,10 @@ import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
+import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
+import com.wisesignsoft.OperationManagement.net.response.DataTypeSelector;
+import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
+import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
 import com.wisesignsoft.OperationManagement.net.response.LoginResponse;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
@@ -34,6 +38,9 @@ import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -104,35 +111,39 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         list.add(phone);
         list.add(pwd);
         ApiService.Creator.get().login(RequestBody.getgEnvelope(Protocol.yxyw_name_space, list, Protocol.login))
-                .enqueue(new Callback<String>() {
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(new FlatMapResponse<BaseDataResponse<User>>())
+                .flatMap(new FlatMapTopRes<User>(DataTypeSelector.RE))
+                .subscribe(new Subscriber<User>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        final LoginResponse result = GsonHelper.build().getObjectByJson(response.body(), LoginResponse.class);
-                        if (result.returnState.equals("-1")) {
-                            ToastUtil.showMessage(getBaseContext(), result.getReturnMsg());
-                        } else {
-                            Realm realm = Realm.getDefaultInstance();
-                            realm.executeTransactionAsync(new Realm.Transaction() {
-                                @Override
-                                public void execute(Realm realm) {
-                                    User user = new User();
-                                    user.setUserId(result.getReturnValue().getUserId());
-                                    user.setUsername(phone);
-                                    user.setStatue(0);
-                                    realm.copyToRealmOrUpdate(user);
-                                }
-                            });
-                            MySharedpreferences.putStatusBoolean(Constant.ISLOGIN, true);
-                            MySharedpreferences.putMapStatusBoolean(true);
-                            toMain();
-                        }
+                    public void onCompleted() {
                         loadingView.stop(loadingView);
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onError(Throwable e) {
                         loadingView.stop(loadingView);
-                        EEMsgToastHelper.newInstance().selectWitch(t.getMessage());
+                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(final User userRes) {
+                        loadingView.stop(loadingView);
+                        Realm realm = Realm.getDefaultInstance();
+                        realm.executeTransactionAsync(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                User user = new User();
+                                user.setUserId(userRes.getUserId());
+                                user.setUsername(phone);
+                                user.setStatue(0);
+                                realm.copyToRealmOrUpdate(user);
+                            }
+                        });
+                        MySharedpreferences.putMapStatusBoolean(true);
+                        toMain();
+
                     }
                 });
 

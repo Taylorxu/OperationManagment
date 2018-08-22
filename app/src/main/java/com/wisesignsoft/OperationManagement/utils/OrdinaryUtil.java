@@ -2,9 +2,8 @@ package com.wisesignsoft.OperationManagement.utils;
 
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.OrdinaryModel;
+import com.wisesignsoft.OperationManagement.bean.ResourcesBean;
 import com.wisesignsoft.OperationManagement.bean.User;
-import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
-import com.wisesignsoft.OperationManagement.net.response.QueryUserResourceResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +13,9 @@ import java.util.List;
  */
 
 public class OrdinaryUtil {
-    public static List<OrdinaryModel> toOrdinaryModel(List<QueryUserResourceResponse.ResourcesBean> datas) {
+    public static List<OrdinaryModel> toOrdinaryModel(List<ResourcesBean> datas) {
         List<OrdinaryModel> models = new ArrayList<>();
-        for (QueryUserResourceResponse.ResourcesBean bean : datas) {
+        for (ResourcesBean bean : datas) {
             int reId = getReIdByUrl(bean.getResUrl());
             if (-1 != reId) {
                 OrdinaryModel model = new OrdinaryModel();

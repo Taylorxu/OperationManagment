@@ -1,6 +1,6 @@
 package com.wisesignsoft.OperationManagement.bean;
 
-public class TaskItem {
+public class TaskItemBean {
     private String PIKEY;
     private String PROCESS_KEY_NAME;
     private String TITLE;

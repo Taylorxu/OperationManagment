@@ -17,21 +17,21 @@ import com.wisesignsoft.OperationManagement.BaseFragment;
 import com.wisesignsoft.OperationManagement.OrdinaryAdapter;
 import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
+import com.wisesignsoft.OperationManagement.bean.AccountInfoBean;
 import com.wisesignsoft.OperationManagement.bean.OrdinaryModel;
-import com.wisesignsoft.OperationManagement.bean.ReturnValue;
+import com.wisesignsoft.OperationManagement.bean.ResourcesBean;
 import com.wisesignsoft.OperationManagement.bean.User;
-import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
 import com.wisesignsoft.OperationManagement.mview.DividerGridItemDecoration;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
 import com.wisesignsoft.OperationManagement.mview.MyDialog;
-import com.wisesignsoft.OperationManagement.net.response.BaseResponse;
-import com.wisesignsoft.OperationManagement.net.response.LoginResponse;
-import com.wisesignsoft.OperationManagement.net.response.QueryUserResourceResponse;
-import com.wisesignsoft.OperationManagement.net.response.QueryValidUsersByAccountResponse;
+import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
+import com.wisesignsoft.OperationManagement.net.response.DataTypeSelector;
+import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
+import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
 import com.wisesignsoft.OperationManagement.ui.activity.SolvingActivity;
-import com.wisesignsoft.OperationManagement.utils.GsonHelper;
+import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
 import com.wisesignsoft.OperationManagement.utils.OrdinaryUtil;
 
 import java.util.ArrayList;
@@ -40,6 +40,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by ycs on 2016/11/18.
@@ -56,8 +59,8 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
     private RecyclerView rv_ordinary;
 
 
-    private List<QueryUserResourceResponse.ResourcesBean> datas;
-    private List<OrdinaryModel> models;
+    private List<ResourcesBean> datas = new ArrayList<>();
+    private List<OrdinaryModel> models = new ArrayList<>();
     private OrdinaryAdapter adapter;
     private LoadingView loadingView;
 
@@ -89,53 +92,71 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
         final List<String> list = new ArrayList<>();
         list.add(User.getUserFromRealm().getUsername());
         ApiService.Creator.get().queryUserResource(RequestBody.getgEnvelope(Protocol.yxyw_name_space, list, Protocol.queryUserResource))
-                .enqueue(new Callback<String>() {
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(new FlatMapResponse<BaseDataResponse<List<ResourcesBean>>>())
+                .flatMap(new FlatMapTopRes<List<ResourcesBean>>(DataTypeSelector.RS))
+                .subscribe(new Subscriber<List<ResourcesBean>>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
                         loadingView.stop(loadingView);
-                        if (response.body() != null) {
-                            QueryUserResourceResponse result = GsonHelper.build().getObjectByJson(response.body(), QueryUserResourceResponse.class);
-                            datas = result.getResources();
+                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(List<ResourcesBean> resourcesBeans) {
+                        if (resourcesBeans != null) {
+                            datas = resourcesBeans;
                             initData(datas);
                             queryValidUsersByAccount(list);
                         }
                     }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        loadingView.stop(loadingView);
-                    }
                 });
+
+
         ApiService.Creator.get().queryUnhandleProcessCount(RequestBody.getgEnvelope(Protocol.yxyw_name_space, list, Protocol.QueryUnhandleProcessCount))
-                .enqueue(new Callback<String>() {
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(new FlatMapResponse<BaseDataResponse<String>>())
+                .flatMap(new FlatMapTopRes<String>(DataTypeSelector.RE))
+                .subscribe(new Subscriber<String>() {
+
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
+                    public void onCompleted() {
                         loadingView.stop(loadingView);
-                        if (response.body() != null) {
-                            ReturnValue result = GsonHelper.build().getObjectByJson(response.body(), ReturnValue.class);
-                            String num = result.getReturnValue();
-                            if (!TextUtils.isEmpty(num)) {
-                                tv_ordinary_num.setVisibility(View.VISIBLE);
-                                int num_int = Integer.parseInt(num);
-                                String temp;
-                                if (num_int > 99) {
-                                    temp = "99+";
-                                } else {
-                                    temp = num;
-                                }
-                                tv_ordinary_num.setText(temp);
-                            } else {
-                                tv_ordinary_num.setVisibility(View.GONE);
-                            }
-                            loadingView.stop(loadingView);
-                        }
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onError(Throwable e) {
+                        loadingView.stop(loadingView);
+                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(String num) {
+                        loadingView.stop(loadingView);
+                        if (!TextUtils.isEmpty(num)) {
+                            tv_ordinary_num.setVisibility(View.VISIBLE);
+                            int num_int = Integer.parseInt(num);
+                            String temp;
+                            if (num_int > 99) {
+                                temp = "99+";
+                            } else {
+                                temp = num;
+                            }
+                            tv_ordinary_num.setText(temp);
+                        } else {
+                            tv_ordinary_num.setVisibility(View.GONE);
+                        }
                         loadingView.stop(loadingView);
                     }
                 });
+
 
     }
 
@@ -144,7 +165,7 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
      *
      * @param datas
      */
-    private void initData(List<QueryUserResourceResponse.ResourcesBean> datas) {
+    private void initData(List<ResourcesBean> datas) {
         if (datas != null && datas.size() > 0) {
             models = OrdinaryUtil.toOrdinaryModel(datas);
             adapter = new OrdinaryAdapter(getContext(), models, this);
@@ -246,7 +267,7 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-
+                        EEMsgToastHelper.newInstance().selectWitch(t.getMessage());
                     }
                 });
             }
@@ -299,28 +320,35 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
      */
     private void queryValidUsersByAccount(List<String> list) {
 
-        ApiService.Creator.get().queryValidUsersByAccount(RequestBody.getgEnvelope(Protocol.yxyw_name_space, list, Protocol.queryValidUsersByAccount)).enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                loadingView.stop(loadingView);
-                if (response.body() != null) {
-                    QueryValidUsersByAccountResponse result = GsonHelper.build().getObjectByJson(response.body(), QueryValidUsersByAccountResponse.class);
-                    String stute = result.getReturnValue().getUserState();
-                    if ("1".equals(stute)) {
-                        changeStateData(1);
-                    } else {
-                        changeStateData(0);
-                    }
-                    adapter.notifyDataSetChanged();
-                }
-            }
+        ApiService.Creator.get().queryValidUsersByAccount(RequestBody.getgEnvelope(Protocol.yxyw_name_space, list, Protocol.queryValidUsersByAccount))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(new FlatMapResponse<BaseDataResponse<AccountInfoBean>>())
+                .flatMap(new FlatMapTopRes<AccountInfoBean>(DataTypeSelector.RE))
+                .subscribe(new Subscriber<AccountInfoBean>() {
+                    @Override
+                    public void onCompleted() {
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                loadingView.stop(loadingView);
-                t.printStackTrace();
-            }
-        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        loadingView.stop(loadingView);
+                        e.printStackTrace();
+                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(AccountInfoBean accountInfoBean) {
+                        String stute = accountInfoBean.getUserState();
+                        if ("1".equals(stute)) {
+                            changeStateData(1);
+                        } else {
+                            changeStateData(0);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
 
     }
 }
