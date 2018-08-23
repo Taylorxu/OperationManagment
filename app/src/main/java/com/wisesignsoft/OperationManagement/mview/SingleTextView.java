@@ -12,12 +12,18 @@ import android.widget.TextView;
 
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.utils.LogUtil;
+
+import javax.annotation.Nullable;
+
+import io.realm.ObjectChangeSet;
+import io.realm.RealmObjectChangeListener;
 
 /**
  * 单行输入组件
- * Created by ycs on 2016/11/30.
+ * TODO 列表控件 是一个有多个类似textView的布局。指定的model 是 ColumnsJsonBean 。所以需要 单独写一个textView
  */
-public class SingleTextView extends LinearLayout {
+public class SingleTextView extends LinearLayout implements RealmObjectChangeListener<WorkOrder> {
 
     private TextView tv_single_text;
     private EditText et_single_text;
@@ -69,28 +75,6 @@ public class SingleTextView extends LinearLayout {
         }
     }
 
-    /**
-     * 列表控件赋值用
-     *
-     * @param key
-     * @param value
-     */
-    public void setData(String key, String value, boolean request, boolean modify) {
-        if (!TextUtils.isEmpty(key)) {
-            if (request) {
-                tv_single_text.setText(key + " *");
-            } else {
-                tv_single_text.setText(key);
-            }
-        }
-        et_single_text.setEnabled(modify);
-        et_single_text.setFocusable(modify);
-        if (!TextUtils.isEmpty(value)) {
-            et_single_text.setText(value);
-        }
-    }
-
-
     public String getValue() {
         return et_single_text.getText().toString().trim();
     }
@@ -101,5 +85,14 @@ public class SingleTextView extends LinearLayout {
 
     public String getKey() {
         return key;
+    }
+
+    @Override
+    public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
+        if (changeSet.isDeleted()) {
+            return;
+        }
+        LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
+        setData(workOrder);
     }
 }

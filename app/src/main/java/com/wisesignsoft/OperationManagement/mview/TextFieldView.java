@@ -12,8 +12,14 @@ import android.widget.TextView;
 
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
-public class TextFieldView extends RelativeLayout {
+import javax.annotation.Nullable;
+
+import io.realm.ObjectChangeSet;
+import io.realm.RealmObjectChangeListener;
+
+public class TextFieldView extends RelativeLayout implements RealmObjectChangeListener<WorkOrder> {
 
     private EditText et;
     private TextView tv_text_field;
@@ -58,22 +64,17 @@ public class TextFieldView extends RelativeLayout {
         }
     }
 
-    /**
-     * 列表控件赋值用
-     *
-     * @param key
-     * @param value
-     */
-    public void setData(String key, String value) {
-        if (!TextUtils.isEmpty(key)) {
-            tv_text_field.setText(key);
-        }
-        if (!TextUtils.isEmpty(value)) {
-            et.setText(value);
-        }
-    }
 
     public String getValue() {
         return et.getText().toString().trim();
+    }
+
+    @Override
+    public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
+        if (changeSet.isDeleted()) {
+            return;
+        }
+        LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
+        setData(workOrder);
     }
 }

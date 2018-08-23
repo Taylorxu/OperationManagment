@@ -23,10 +23,15 @@ import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
 import com.wisesignsoft.OperationManagement.ui.activity.EventClassificationActivity;
 import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
+import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import io.realm.ObjectChangeSet;
+import io.realm.RealmObjectChangeListener;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -34,7 +39,7 @@ import rx.schedulers.Schedulers;
 /**
  * 树形选择组件
  */
-public class TreeSelectionView extends RelativeLayout {
+public class TreeSelectionView extends RelativeLayout implements RealmObjectChangeListener<WorkOrder> {
     private TextView tv_tree_left;
     private TextView tv_tree_right;
     private RelativeLayout rl_tree_selection;
@@ -56,6 +61,7 @@ public class TreeSelectionView extends RelativeLayout {
 
 
     public void setData(final WorkOrder wo) {
+        wo.addChangeListener(this);
         this.wo = wo;
         String title = wo.getName();
         final String content = wo.getValue();
@@ -171,5 +177,14 @@ public class TreeSelectionView extends RelativeLayout {
         model1.setDictParentValue(bean.getDictParentValue());
         model1.setDictValue(bean.getDictValue());
         return model1;
+    }
+
+    @Override
+    public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
+        if (changeSet.isDeleted()) {
+            return;
+        }
+        LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
+        setData(workOrder);
     }
 }

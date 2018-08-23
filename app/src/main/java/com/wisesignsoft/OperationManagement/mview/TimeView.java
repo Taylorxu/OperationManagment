@@ -15,13 +15,20 @@ import android.widget.Toast;
 import com.wisesignsoft.OperationManagement.MainActivity;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
+import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
 import java.util.Calendar;
+
+import javax.annotation.Nullable;
+
+import io.realm.ObjectChangeSet;
+import io.realm.RealmObjectChangeListener;
 
 /**
  * 时间日期选择组件
  */
-public class TimeView extends LinearLayout implements View.OnClickListener {
+public class TimeView extends LinearLayout implements View.OnClickListener,RealmObjectChangeListener<WorkOrder> {
     private TextView data_title;
     private TextView data_content;
     private WorkOrder wo;
@@ -105,7 +112,7 @@ public class TimeView extends LinearLayout implements View.OnClickListener {
                         //更新EditText控件时间 小于10加0
                         temp = temp + " " + new StringBuilder().append(mHour < 10 ? 0 + mHour : mHour).append(":").append(mMinute < 10 ? 0 + mMinute : mMinute).append(":00").toString();
                         data_content.setText(temp);
-//                        WorkOrderDataManager.getManager().setSingleDateById(wo.getID(), temp);
+                        WorkOrderDataManager.newInstance().modifyValue(wo.getID(), temp);
                     }
                 }, c.get(Calendar.HOUR_OF_DAY),
                 c.get(Calendar.MINUTE), true).show();
@@ -145,7 +152,7 @@ public class TimeView extends LinearLayout implements View.OnClickListener {
                             openTime();
                         } else {
                             data_content.setText(temp);
-//                            WorkOrderDataManager.getManager().setSingleDateById(wo.getID(), temp);
+                            WorkOrderDataManager.newInstance().modifyValue(wo.getID(), temp);
                         }
                     }
                 }
@@ -157,5 +164,14 @@ public class TimeView extends LinearLayout implements View.OnClickListener {
 
     public String getValue() {
         return temp;
+    }
+
+    @Override
+    public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
+        if (changeSet.isDeleted()) {
+            return;
+        }
+        LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
+        setData(workOrder);
     }
 }

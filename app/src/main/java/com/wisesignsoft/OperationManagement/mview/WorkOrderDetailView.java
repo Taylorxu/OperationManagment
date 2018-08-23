@@ -10,6 +10,7 @@ import com.wisesignsoft.OperationManagement.BaseActivity;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.Section;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.ui.activity.OrderSolvedActivity;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
@@ -18,13 +19,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
+import io.realm.ObjectChangeSet;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmList;
+import io.realm.RealmModel;
+import io.realm.RealmObjectChangeListener;
 import io.realm.RealmResults;
 
 public class WorkOrderDetailView extends LinearLayout {
     //最外层的布局
     public static LinearLayout ll_work_order_detail;
+    private Context context;
 
     public WorkOrderDetailView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -32,38 +40,24 @@ public class WorkOrderDetailView extends LinearLayout {
     }
 
     private void init(Context context) {
+        this.context = context;
         View view = LayoutInflater.from(context).inflate(R.layout.work_order_detail, this, true);
         ll_work_order_detail = (LinearLayout) view.findViewById(R.id.ll_work_order_detail);
     }
 
     /**
-     * @param datas
-     * @param context
+     * 根据更新后的ream数据去填充布局
      */
-    public void setData(List datas, Context context) {
+    public void fillComponents() {
         Realm realm = Realm.getDefaultInstance();
-        for (final Object o : datas) {
-            if (o instanceof Section) {
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        Section section = new Section();
-                        section.setID(((Section) o).getID());
-                        section.setCurrent(((Section) o).isCurrent());
-                        section.setLabel(((Section) o).getLabel());
-                        section.setSection(((Section) o).getSection());
-                        realm.copyToRealmOrUpdate(section);
-                    }
-                });
-            }
-        }
         //Section & WorkOrder
         RealmResults<Section> sectionRealmList = realm.where(Section.class).findAll();
         for (Section section : sectionRealmList) {
             SectionView sectionView = new SectionView(context);
             sectionView.setData(section.getLabel(), section.isCurrent());
             ll_work_order_detail.addView(sectionView);
-            for (WorkOrder wo : section.getSection()) {
+            RealmResults<WorkOrder> workOrders = realm.where(WorkOrder.class).findAll();
+            for (WorkOrder wo : workOrders) {
                 if (!wo.isVisible() && !wo.getViewName().equals("Position")) {
                     continue;
                 }
@@ -74,6 +68,37 @@ public class WorkOrderDetailView extends LinearLayout {
         realm.close();
     }
 
+    /**
+     * 根据接口返回的数据
+     * @param datas
+     */
+    public void refreshRealmData(List datas) {
+        Realm realm = Realm.getDefaultInstance();
+        for (final Object o : datas) {
+            if (o instanceof Section) {
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Section section = new Section();
+                        section.setID(((Section) o).getID());
+                        section.setCurrent(((Section) o).isCurrent());
+                        section.setLabel(((Section) o).getLabel());
+                        RealmList<WorkOrder> workOrders = new RealmList<>();
+                        for (WorkOrder workOrder : ((Section) o).getSection()) {
+                            workOrders.add(workOrder);
+                        }
+                        section.setSection(workOrders);
+                        realm.copyToRealmOrUpdate(section);
+                    }
+                });
+            } else {
+                //TODO 其它
+            }
+        }
+        realm.close();
+        fillComponents();
+    }
+
 
     /**
      * 根据 条件 渲染组件
@@ -82,13 +107,11 @@ public class WorkOrderDetailView extends LinearLayout {
         switch (viewName) {
             case "TextInput":   //输入框
                 SingleTextView singleTextView = new SingleTextView(context);
-
                 sectionView.getLl_section_view().addView(singleTextView);
                 singleTextView.setData(wo);
                 break;
             case "TextArea":    //文本域
                 TextFieldView textFieldView = new TextFieldView(context);
-
                 textFieldView.setData(wo);
                 sectionView.getLl_section_view().addView(textFieldView);
                 break;

@@ -14,6 +14,7 @@ import android.widget.CompoundButton;
 import com.wisesignsoft.OperationManagement.BaseActivity;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.EventClassificationModel;
+import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
 import com.wisesignsoft.OperationManagement.mview.NextView;
 import com.wisesignsoft.OperationManagement.utils.TempTreeSelectionDataManager;
@@ -118,7 +119,7 @@ public class EventClassificationActivity extends BaseActivity {
                 result = result.substring(1, result.length() - 1).replace(" ", "");
                 TempTreeSelectionDataManager.getManager().setTemp(result);
                 TempTreeSelectionDataManager.getManager().clearEventClassificationActivity();
-//                WorkOrderDataManager.getManager().setSingleDateById(id, result);
+                WorkOrderDataManager.newInstance().modifyValue(id, result);
             }
         }
     }
@@ -178,7 +179,7 @@ public class EventClassificationActivity extends BaseActivity {
                             @Override
                             public void onClick(View view) {
                                 String temp = model.getDictId();
-//                                WorkOrderDataManager.getManager().setSingleDateById(id, temp);
+                                WorkOrderDataManager.newInstance().modifyValue(id, temp);
                                 TempTreeSelectionDataManager.getManager().setTemp(temp);
                                 TempTreeSelectionDataManager.getManager().clearEventClassificationActivity();
                             }

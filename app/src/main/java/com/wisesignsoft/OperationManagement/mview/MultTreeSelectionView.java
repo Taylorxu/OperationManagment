@@ -16,6 +16,7 @@ import com.wisesignsoft.OperationManagement.bean.DictDatas;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.EventClassificationModel;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
 import com.wisesignsoft.OperationManagement.net.response.DataTypeSelector;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
@@ -24,10 +25,15 @@ import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
 import com.wisesignsoft.OperationManagement.ui.activity.EventClassificationActivity;
 import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
+import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import io.realm.ObjectChangeSet;
+import io.realm.RealmObjectChangeListener;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -37,7 +43,7 @@ import rx.schedulers.Schedulers;
  * Created by xzg on 2018/7/23.
  */
 
-public class MultTreeSelectionView extends RelativeLayout {
+public class MultTreeSelectionView extends RelativeLayout implements RealmObjectChangeListener<WorkOrder> {
     private LoadingView loadingView;
     private WorkOrder wo;
     private List<DictDatasBean> list1;
@@ -77,7 +83,7 @@ public class MultTreeSelectionView extends RelativeLayout {
                     }
                     removeFromDatas(bean.getDictId(), datas);
                     wo.setValue(sb.toString());
-//                    WorkOrderDataManager.getManager().setSingleDateById2(wo.getID(), sb.toString());
+                    WorkOrderDataManager.newInstance().modifyValue(wo.getID(), sb.toString());
 
                 }
             }
@@ -250,4 +256,12 @@ public class MultTreeSelectionView extends RelativeLayout {
     }
 
 
+    @Override
+    public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
+        if (changeSet.isDeleted()) {
+            return;
+        }
+        LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
+        setData(workOrder);
+    }
 }

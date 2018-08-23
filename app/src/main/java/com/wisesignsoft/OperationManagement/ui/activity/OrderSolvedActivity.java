@@ -124,7 +124,7 @@ public class OrderSolvedActivity extends BaseActivity {
                     public void onNext(TaskDetailBean taskDetailBean) {
                         crossfade();
                         List datas = PullPaseXmlUtil.pase(taskDetailBean.getFormDocument());
-                        wodv_solved.setData(datas, OrderSolvedActivity.this);
+                        wodv_solved.refreshRealmData(datas);
                     }
                 });
     }

@@ -8,8 +8,14 @@ import android.widget.LinearLayout;
 
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
-public class DataDisplayDateView extends LinearLayout {
+import javax.annotation.Nullable;
+
+import io.realm.ObjectChangeSet;
+import io.realm.RealmObjectChangeListener;
+
+public class DataDisplayDateView extends LinearLayout implements RealmObjectChangeListener<WorkOrder> {
 
     private KeyValueView kvv_data_display_date;
 
@@ -38,5 +44,14 @@ public class DataDisplayDateView extends LinearLayout {
         } else {
             kvv_data_display_date.setValueText("");
         }
+    }
+
+    @Override
+    public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
+        if (changeSet.isDeleted()) {
+            return;
+        }
+        LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
+        setData(workOrder);
     }
 }
