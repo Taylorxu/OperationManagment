@@ -25,6 +25,7 @@ import io.realm.RealmResults;
 public class WorkOrderDetailView extends LinearLayout {
     //最外层的布局
     public static LinearLayout ll_work_order_detail;
+
     public WorkOrderDetailView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
@@ -100,6 +101,18 @@ public class WorkOrderDetailView extends LinearLayout {
                 TimeView timeView = new TimeView(context);
                 sectionView.getLl_section_view().addView(timeView);
                 timeView.setData(wo);
+                break;
+            case "TreeData":    //树形数据选择组件
+                if (wo.isMult()) {
+                    MultTreeSelectionView view = new MultTreeSelectionView(context);
+                    sectionView.getLl_section_view().addView(view);
+                    view.setData(wo);
+                } else {
+                    TreeSelectionView treeSelectionView = new TreeSelectionView(context);
+                    sectionView.getLl_section_view().addView(treeSelectionView);
+                    treeSelectionView.setData(wo);
+                }
+
                 break;
         }
     }

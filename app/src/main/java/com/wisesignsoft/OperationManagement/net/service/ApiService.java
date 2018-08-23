@@ -3,6 +3,8 @@ package com.wisesignsoft.OperationManagement.net.service;
 
 import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.bean.AccountInfoBean;
+import com.wisesignsoft.OperationManagement.bean.DictDatas;
+import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.ResourcesBean;
 import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
@@ -71,6 +73,14 @@ public interface ApiService {
      */
     @POST(Protocol.process_host)
     Observable<Response<TaskDetailBean>> openTaskDetail(@Body String requestStr);
+
+    /**
+     * 查询单个字典有效数据
+     * @param requestStr
+     * @return
+     */
+    @POST(Protocol.dict_host)
+    Observable<Response<BaseDataResponse<DictDatas>>> queryValidCiByModelName(@Body String requestStr);
 
 
     class Creator {

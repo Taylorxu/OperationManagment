@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/rl_tree_selection"
+    android:layout_height="42dp"
+    android:layout_marginTop="10dp">
+
+    <View
+        android:id="@+id/v_top_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/home_line" />
+
+    <TextView
+        android:id="@+id/tv_tree_left"
+        style="@style/TitleViewColorSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true" />
+
+    <ImageView
+        android:id="@+id/iv_tree_selection_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="12dp"
+        android:src="@mipmap/entity" />
+
+    <TextView
+        android:id="@+id/tv_tree_right"
+        style="@style/ContentViewColorSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_toLeftOf="@id/iv_tree_selection_view"
+        android:layout_toRightOf="@id/tv_tree_left"
+        android:ellipsize="end"
+        android:gravity="right"
+        android:maxLines="1" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_alignParentBottom="true"
+        android:background="@color/home_line" />
+
+</RelativeLayout>
