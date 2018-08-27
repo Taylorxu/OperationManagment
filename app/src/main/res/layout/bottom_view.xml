@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
-    <com.wisesignsoft.OperationManagement.view.mview.BaseView
+    <com.wisesignsoft.OperationManagement.mview.BaseView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/bv_bottom_view"/>

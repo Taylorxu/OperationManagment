@@ -13,23 +13,4 @@
         android:layout_height="match_parent"
         android:src="@drawable/boot" />
 
-    <!--<TextView-->
-        <!--android:id="@+id/tv_boot1"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@id/iv_boot"-->
-        <!--android:layout_marginTop="20dp"-->
-        <!--android:text="@string/boot1"-->
-        <!--android:textColor="@color/black"-->
-        <!--android:textSize="25sp" />-->
-
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@id/tv_boot1"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:text="@string/boot2"-->
-        <!--android:textColor="@color/c3"-->
-        <!--android:textSize="15sp" />-->
-
 </LinearLayout>

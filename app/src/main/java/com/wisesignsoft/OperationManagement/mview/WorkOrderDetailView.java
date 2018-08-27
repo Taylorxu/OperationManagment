@@ -7,10 +7,19 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.wisesignsoft.OperationManagement.BaseActivity;
+import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
+import com.wisesignsoft.OperationManagement.bean.DictDatas;
+import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.Section;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
+import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
+import com.wisesignsoft.OperationManagement.net.response.DataTypeSelector;
+import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
+import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
+import com.wisesignsoft.OperationManagement.net.service.ApiService;
+import com.wisesignsoft.OperationManagement.net.service.RequestBody;
 import com.wisesignsoft.OperationManagement.ui.activity.OrderSolvedActivity;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
@@ -28,6 +37,9 @@ import io.realm.RealmList;
 import io.realm.RealmModel;
 import io.realm.RealmObjectChangeListener;
 import io.realm.RealmResults;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class WorkOrderDetailView extends LinearLayout {
     //最外层的布局
@@ -65,11 +77,13 @@ public class WorkOrderDetailView extends LinearLayout {
                 createCompoent(viewName, context, wo, sectionView);
             }
         }
+
         realm.close();
     }
 
     /**
      * 根据接口返回的数据
+     *
      * @param datas
      */
     public void refreshRealmData(List datas) {
@@ -135,7 +149,10 @@ public class WorkOrderDetailView extends LinearLayout {
                     sectionView.getLl_section_view().addView(treeSelectionView);
                     treeSelectionView.setData(wo);
                 }
-
+            case "ComboBox":    //组合框
+                BottomView bottomView = new BottomView(context);
+                sectionView.getLl_section_view().addView(bottomView);
+                bottomView.setData(wo);
                 break;
         }
     }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
 import com.wisesignsoft.OperationManagement.mview.SelectorView;
 import com.wisesignsoft.OperationManagement.ui.fragment.ContactFragment;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         initView();
         //TODO 上送地理位置
+        WorkOrderDataManager.newInstance().getAllValidDictData();
     }
 
     private void initView() {

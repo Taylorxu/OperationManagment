@@ -7,7 +7,7 @@ import com.wisesignsoft.OperationManagement.bean.BMForm;
 import com.wisesignsoft.OperationManagement.bean.ButtonModel;
 import com.wisesignsoft.OperationManagement.bean.Section;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
-import com.wisesignsoft.OperationManagement.mview.widget.BMFormDataLinkage;
+import com.wisesignsoft.OperationManagement.mview.BMFormDataLinkage;
 
 import org.xmlpull.v1.XmlPullParser;
 

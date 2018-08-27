@@ -47,6 +47,7 @@ public interface ApiService {
     @POST(Protocol.yxyw_host)
     Observable<Response<BaseDataResponse<String>>> queryUnhandleProcessCount(@Body String requestStr);
 
+
     /**
      * 修改用户的闲忙状态
      *
@@ -81,6 +82,14 @@ public interface ApiService {
      */
     @POST(Protocol.dict_host)
     Observable<Response<BaseDataResponse<DictDatas>>> queryValidCiByModelName(@Body String requestStr);
+
+    /**
+     * 全部字典数据
+     * @param requestStr
+     * @return
+     */
+    @POST(Protocol.dict_host)
+    Observable<Response<BaseDataResponse<List<DictDatas>>>> queryAllValidDictData(@Body String requestStr);
 
 
     class Creator {

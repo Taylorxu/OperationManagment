@@ -122,9 +122,10 @@ public class OrderSolvedActivity extends BaseActivity {
 
                     @Override
                     public void onNext(TaskDetailBean taskDetailBean) {
-                        crossfade();
                         List datas = PullPaseXmlUtil.pase(taskDetailBean.getFormDocument());
                         wodv_solved.refreshRealmData(datas);
+//                        crossfade();
+                        loadingView.stop(loadingView);
                     }
                 });
     }
@@ -138,7 +139,7 @@ public class OrderSolvedActivity extends BaseActivity {
 
         loadingView.rootView.animate()
                 .alpha(0f)
-                .setDuration(500)
+                .setDuration(1000)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {

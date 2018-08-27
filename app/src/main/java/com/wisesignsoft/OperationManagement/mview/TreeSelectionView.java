@@ -15,6 +15,7 @@ import com.wisesignsoft.OperationManagement.bean.DictDatas;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.EventClassificationModel;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
 import com.wisesignsoft.OperationManagement.net.response.DataTypeSelector;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
@@ -66,7 +67,9 @@ public class TreeSelectionView extends RelativeLayout implements RealmObjectChan
         String title = wo.getName();
         final String content = wo.getValue();
         final String param = wo.getSrclib();
-        queryValidCiByModelName(param, content);//为控件赋值
+//        queryValidCiByModelName(param, content);//为控件赋值
+        String dicValue = WorkOrderDataManager.newInstance().getDicValue(wo.getValue());
+        tv_tree_right.setText(dicValue);
         if (!wo.isModified()) {
             rl_tree_selection.setFocusable(false);
             rl_tree_selection.setClickable(false);

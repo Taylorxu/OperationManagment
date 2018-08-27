@@ -1,13 +1,15 @@
 package com.wisesignsoft.OperationManagement.bean;
 
-import com.wisesignsoft.OperationManagement.bean.District;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * 字典数据
  */
-public class DictDatasBean extends District {
-    private String dictValue;
+public class DictDatasBean extends RealmObject {
+    @PrimaryKey
     private String dictId;
+    private String dictValue;
     private String dictParentValue;
     private String dictName;
 

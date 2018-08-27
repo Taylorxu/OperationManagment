@@ -1,4 +1,4 @@
-package com.wisesignsoft.OperationManagement.mview.widget;
+package com.wisesignsoft.OperationManagement.mview;
 
 
 public class BMFormDataLinkage {
