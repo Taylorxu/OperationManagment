@@ -1,31 +1,21 @@
 package com.wisesignsoft.OperationManagement.mview;
 
 import android.content.Context;
-import android.renderscript.Element;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
-import com.wisesignsoft.OperationManagement.bean.DictDatas;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.EventClassificationModel;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.db.CallBack;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
-import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
-import com.wisesignsoft.OperationManagement.net.response.DataTypeSelector;
-import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
-import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
-import com.wisesignsoft.OperationManagement.net.service.ApiService;
-import com.wisesignsoft.OperationManagement.net.service.RequestBody;
 import com.wisesignsoft.OperationManagement.ui.activity.EventClassificationActivity;
-import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
+import com.wisesignsoft.OperationManagement.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,20 +24,17 @@ import javax.annotation.Nullable;
 
 import io.realm.ObjectChangeSet;
 import io.realm.RealmObjectChangeListener;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * 树形选择组件
+ * xuzhiguang
+ * 点击时根据字典模型编码去查询相应的字典值。得到的结果作为参数传给 选择界面
  */
 public class TreeSelectionView extends RelativeLayout implements RealmObjectChangeListener<WorkOrder> {
     private TextView tv_tree_left;
     private TextView tv_tree_right;
     private RelativeLayout rl_tree_selection;
-    private LoadingView loadingView;
-    private WorkOrder wo;
-    private List<DictDatasBean> list1;
+    private List<DictDatasBean> list1 = new ArrayList<>();
 
     public TreeSelectionView(Context context) {
         super(context);
@@ -59,12 +46,13 @@ public class TreeSelectionView extends RelativeLayout implements RealmObjectChan
         tv_tree_left = (TextView) view.findViewById(R.id.tv_tree_left);
         tv_tree_right = (TextView) view.findViewById(R.id.tv_tree_right);
         rl_tree_selection = (RelativeLayout) view.findViewById(R.id.rl_tree_selection);
+
     }
 
 
     public void setData(final WorkOrder wo) {
         wo.addChangeListener(this);
-        this.wo = wo;
+        final String woId = wo.getID();
         String title = wo.getName();
         final String content = wo.getValue();
         WorkOrderDataManager.newInstance().getDicValue(content, new CallBack<String>() {
@@ -79,9 +67,7 @@ public class TreeSelectionView extends RelativeLayout implements RealmObjectChan
         });
 
         if (!wo.isModified()) {
-            rl_tree_selection.setFocusable(false);
-            rl_tree_selection.setClickable(false);
-            rl_tree_selection.clearFocus();
+            rl_tree_selection.setEnabled(false);
         }
         if (!TextUtils.isEmpty(title)) {
             if (wo.isRequired()) {
@@ -90,62 +76,34 @@ public class TreeSelectionView extends RelativeLayout implements RealmObjectChan
                 tv_tree_left.setText(title);
             }
         }
-
+        final android.os.Handler handler = new android.os.Handler();
         rl_tree_selection.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                List<EventClassificationModel> datas = pickOutRootData();
-                EventClassificationActivity.startSelf(getContext(), datas, wo.getID());
+                if (!wo.isModified()) {
+                    ToastUtil.toast(getContext(), "不可编辑");
+                }
+                final LoadingView loadingView = LoadingView.getLoadingView(getContext());
+                loadingView.show();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new CallBack<List<DictDatasBean>>() {
+                            @Override
+                            public void onResponse(List<DictDatasBean> dictDatasBeans) {
+                                list1 = new ArrayList<>();
+                                list1.addAll(dictDatasBeans);
+                                List<EventClassificationModel> datas = pickOutRootData();
+                                EventClassificationActivity.startSelf(getContext(), datas, woId);
+                                loadingView.stop(loadingView);
+                            }
+                        });
+                    }
+                }, 2000);
+
+
             }
         });
-    }
-
-
-    /**
-     * 查询单个字典有效数据
-     *
-     * @param param
-     * @param content
-     */
-    private void queryValidCiByModelName(String param, final String content) {
-        List<String> list = new ArrayList<>();
-        list.add(param);
-        loadingView = LoadingView.getLoadingView(getContext());
-        loadingView.show();
-        ApiService.Creator.get().queryValidCiByModelName(RequestBody.getgEnvelope(Protocol.dict_name_space, list, Protocol.queryValidCiByModelName))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(new FlatMapResponse<BaseDataResponse<DictDatas>>())
-                .flatMap(new FlatMapTopRes<DictDatas>(DataTypeSelector.RE))
-                .subscribe(new Subscriber<DictDatas>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        loadingView.stop(loadingView);
-                        e.printStackTrace();
-                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(DictDatas dictDatasBeans) {
-                        list1 = dictDatasBeans.getDictDatas();
-                        if (!TextUtils.isEmpty(content)) {
-                            if (list1 != null) {
-                                for (DictDatasBean bean : list1) {
-                                    if (bean.getDictId().equals(content)) {
-                                        tv_tree_right.setText(bean.getDictName());
-                                    }
-                                }
-                            }
-                        } else {
-                            tv_tree_right.setText("");
-                        }
-                        loadingView.stop(loadingView);
-                    }
-                });
     }
 
 

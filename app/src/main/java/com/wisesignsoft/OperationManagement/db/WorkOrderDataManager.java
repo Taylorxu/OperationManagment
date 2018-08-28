@@ -16,6 +16,7 @@ import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.realm.ProxyState;
@@ -105,19 +106,10 @@ public class WorkOrderDataManager {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    DictDatas dicNew = new DictDatas();
-                    dicNew.setId(finalI);
-                    dicNew.setKey(dic.getKey());
-                    realm.insertOrUpdate(dicNew);
-                }
-            });
-
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
                     if (dic.getDictDatas() != null) {
                         final List<DictDatasBean> dictDatasBeans = new ArrayList<>();
                         for (DictDatasBean dictDatasBean : dic.getDictDatas()) {
+                            dictDatasBean.setSrclib(dic.getKey());
                             dictDatasBeans.add(dictDatasBean);
                         }
                         realm.insertOrUpdate(dictDatasBeans);
@@ -130,32 +122,31 @@ public class WorkOrderDataManager {
         for (DictDatas datas1 : datas) {
             LogUtil.log(datas1.getKey() + "===");
         }*/
-      /*  RealmResults<DictDatasBean> dictDatasBeans = realm.where(DictDatasBean.class).findAll();
+     /*   RealmResults<DictDatasBean> dictDatasBeans = realm.where(DictDatasBean.class).findAll();
         for (DictDatasBean d : dictDatasBeans) {
             LogUtil.log(d.getDictName() + "++++" + d);
-        }*/
-
+        }
+*/
         realm.close();
     }
 
     /**
      * 根据 srclib 字典模型编码 去获取对应的字典集合
-     *
-     * @param wo
-     * @return
      */
-    public RealmList<DictDatasBean> getDictDatas(final WorkOrder wo) {
-        final DictDatas[] dictDatas = new DictDatas[1];
+    public void getDictDatasBySrclib(final String srclib, final CallBack<List<DictDatasBean>> callBack) {
         Realm realm = Realm.getDefaultInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                dictDatas[0] = realm.where(DictDatas.class).equalTo("key", wo.getSrclib()).findFirst();
+                RealmResults<DictDatasBean> realmResults = realm.where(DictDatasBean.class).equalTo("srclib", srclib).findAll();
+                if (realmResults.isLoaded()) {
+                    List<DictDatasBean> beanList = Arrays.asList(realmResults.toArray(new DictDatasBean[]{}));
+                    callBack.onResponse(beanList);
+                }
 
             }
         });
         realm.close();
-        return dictDatas[0].getDictDatas();
 
     }
 
