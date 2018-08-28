@@ -130,10 +130,10 @@ public class WorkOrderDataManager {
         for (DictDatas datas1 : datas) {
             LogUtil.log(datas1.getKey() + "===");
         }*/
-        RealmResults<DictDatasBean> dictDatasBeans = realm.where(DictDatasBean.class).findAll();
+      /*  RealmResults<DictDatasBean> dictDatasBeans = realm.where(DictDatasBean.class).findAll();
         for (DictDatasBean d : dictDatasBeans) {
             LogUtil.log(d.getDictName() + "++++" + d);
-        }
+        }*/
 
         realm.close();
     }

@@ -68,7 +68,7 @@ public class WorkOrderDetailView extends LinearLayout {
             SectionView sectionView = new SectionView(context);
             sectionView.setData(section.getLabel(), section.isCurrent());
             ll_work_order_detail.addView(sectionView);
-            RealmResults<WorkOrder> workOrders = realm.where(WorkOrder.class).findAll();
+            RealmList<WorkOrder> workOrders = section.getSection();
             for (WorkOrder wo : workOrders) {
                 if (!wo.isVisible() && !wo.getViewName().equals("Position")) {
                     continue;
@@ -105,6 +105,7 @@ public class WorkOrderDetailView extends LinearLayout {
                         realm.copyToRealmOrUpdate(section);
                     }
                 });
+
             } else {
                 //TODO 其它
             }
