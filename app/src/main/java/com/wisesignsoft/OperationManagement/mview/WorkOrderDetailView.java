@@ -63,9 +63,10 @@ public class WorkOrderDetailView extends LinearLayout {
     public void fillComponents() {
         Realm realm = Realm.getDefaultInstance();
         //Section & WorkOrder
-        RealmResults<Section> sectionRealmList = realm.where(Section.class).findAll();
+        RealmResults<Section> sectionRealmList = realm.where(Section.class).sort("ID").findAll();
         for (Section section : sectionRealmList) {
             SectionView sectionView = new SectionView(context);
+            LogUtil.log(section.getLabel()+"section.getLabel");
             sectionView.setData(section.getLabel(), section.isCurrent());
             ll_work_order_detail.addView(sectionView);
             RealmList<WorkOrder> workOrders = section.getSection();
