@@ -86,11 +86,19 @@ public class WorkOrderDetailView extends LinearLayout {
      *
      * @param datas
      */
-    public void refreshRealmData(List datas) {
-        Realm realm = Realm.getDefaultInstance();
+    public void refreshRealmData(final List datas) {
+        final Realm realm = Realm.getDefaultInstance();
+        //先删除存在section在更新。 曾考虑过创建一个关联的对象，以pikey 为索引。但考虑到数据的更新频率过快，所以删除旧的section 只保留当前查看的数据。也减少了后期的数据管理
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<Section> sectionRealmList = realm.where(Section.class).findAll();
+                sectionRealmList.deleteAllFromRealm();
+            }
+        });
         for (final Object o : datas) {
             if (o instanceof Section) {
-                realm.executeTransactionAsync(new Realm.Transaction() {
+                realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         Section section = new Section();

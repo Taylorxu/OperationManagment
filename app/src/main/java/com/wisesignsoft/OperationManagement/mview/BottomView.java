@@ -7,24 +7,25 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.wisesignsoft.OperationManagement.R;
-import com.wisesignsoft.OperationManagement.bean.DictDatas;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
+import com.wisesignsoft.OperationManagement.bean.EventClassificationModel;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.db.CallBack;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
+import com.wisesignsoft.OperationManagement.ui.activity.EventClassificationActivity;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmList;
+import javax.annotation.Nullable;
 
-public class BottomView extends RelativeLayout implements View.OnClickListener {
+import io.realm.ObjectChangeSet;
+import io.realm.RealmObjectChangeListener;
 
-
+public class BottomView extends RelativeLayout implements View.OnClickListener, RealmObjectChangeListener<WorkOrder> {
     private BaseView baseView;
     private WorkOrder wo;
-
 
     public BottomView(Context context) {
         super(context);
@@ -76,17 +77,34 @@ public class BottomView extends RelativeLayout implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        final BottomDialog dialog = new BottomDialog(getContext(), R.style.add_dialog);
-//        dialog.setUpData(datas);
-        dialog.setOnTitleClickListener(new BottomDialog.OnTitleClickListener() {
+
+        WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new CallBack<List<DictDatasBean>>() {
             @Override
-            public void onTitleRightClickListener(String province, String name) {
-                baseView.setTv_right(name);
-                WorkOrderDataManager.newInstance().modifyValue(wo.getID(), province);
+            public void onResponse(List<DictDatasBean> dictDatasBeans) {
+                final BottomDialog dialog = new BottomDialog(getContext(), R.style.add_dialog);
+                dialog.setUpData(dictDatasBeans);
+                dialog.setOnTitleClickListener(new BottomDialog.OnTitleClickListener() {
+                    @Override
+                    public void onTitleRightClickListener(String province, String name) {
+                        baseView.setTv_right(name);
+                        WorkOrderDataManager.newInstance().modifyValue(wo.getID(), province);
+                    }
+                });
+                if (!dialog.isShowing()) {
+                    dialog.show();
+                }
             }
         });
-        if (!dialog.isShowing()) {
-            dialog.show();
+
+
+    }
+
+    @Override
+    public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
+        if (changeSet.isDeleted()) {
+            return;
         }
+        LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
+        setData(workOrder);
     }
 }
