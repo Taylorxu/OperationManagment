@@ -1,6 +1,9 @@
 package com.wisesignsoft.OperationManagement.bean;
 
+import javax.annotation.Nullable;
+
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -8,9 +11,11 @@ import io.realm.annotations.PrimaryKey;
  */
 public class DictDatasBean extends RealmObject {
     @PrimaryKey
+    @Index
     private String dictId;
     private String dictValue;
     private String dictParentValue;
+    @Nullable
     private String dictName;
 
     private boolean selected;

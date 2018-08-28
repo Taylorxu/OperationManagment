@@ -17,11 +17,11 @@ import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.logging.Handler;
 
+import io.realm.ProxyState;
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -125,16 +125,17 @@ public class WorkOrderDataManager {
                 }
             });
         }
-        realm.close();
-/*
-        RealmResults<DictDatas> datas = realm.where(DictDatas.class).findAll();
+
+      /*  RealmResults<DictDatas> datas = realm.where(DictDatas.class).findAll();
         for (DictDatas datas1 : datas) {
             LogUtil.log(datas1.getKey() + "===");
-        }
+        }*/
         RealmResults<DictDatasBean> dictDatasBeans = realm.where(DictDatasBean.class).findAll();
         for (DictDatasBean d : dictDatasBeans) {
-            LogUtil.log(d.getDictName() + "++++");
-        }*/
+            LogUtil.log(d.getDictName() + "++++" + d);
+        }
+
+        realm.close();
     }
 
     /**
@@ -164,20 +165,18 @@ public class WorkOrderDataManager {
      * @param value
      * @return
      */
-    public String getDicValue(final String value) {
+    public void getDicValue(final String value, final CallBack<String> callBack) {
+        if (TextUtils.isEmpty(value)) {
+            callBack.onResponse("");
+            return;
+        }
         Realm realm = Realm.getDefaultInstance();
-        final String[] dicValue = {""};
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                DictDatasBean dictDatasBean = realm.where(DictDatasBean.class).equalTo("dictId", value).findFirst();
-                if (dictDatasBean != null)
-                    dicValue[0] = dictDatasBean.getDictName();
-                LogUtil.log(dicValue[0] + "++++");
-            }
-        });
+        if (!realm.isInTransaction()) realm.beginTransaction();
+        RealmQuery<DictDatasBean> realmQuery = realm.where(DictDatasBean.class);
+        DictDatasBean dictDatasBean = realmQuery.equalTo("dictId", value).findFirst();
+        callBack.onResponse(dictDatasBean.getDictName());
+        if (realm.isInTransaction()) realm.commitTransaction();
         realm.close();
-        return dicValue[0];
     }
 
 

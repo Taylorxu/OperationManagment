@@ -10,7 +10,9 @@ import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.DictDatas;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.db.CallBack;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
+import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
 import java.util.List;
 
@@ -42,12 +44,17 @@ public class BottomView extends RelativeLayout implements View.OnClickListener {
         this.wo = wo;
         String title = wo.getName();
         String value = wo.getValue();
-        String dicValue = WorkOrderDataManager.newInstance().getDicValue(value);
-        if (!TextUtils.isEmpty(dicValue)) {
-            baseView.setTv_right(dicValue);
-        } else {
-            baseView.setTv_right("");
-        }
+        WorkOrderDataManager.newInstance().getDicValue(value, new CallBack<String>() {
+            @Override
+            public void onResponse(String dicValue) {
+                if (!TextUtils.isEmpty(dicValue)) {
+                    baseView.setTv_right(dicValue);
+                } else {
+                    baseView.setTv_right("");
+                }
+            }
+        });
+
 
         if (!TextUtils.isEmpty(title)) {
             if (wo.isRequired()) {
