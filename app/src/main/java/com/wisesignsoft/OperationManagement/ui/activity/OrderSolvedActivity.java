@@ -20,6 +20,7 @@ import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.User;
+import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
 import com.wisesignsoft.OperationManagement.mview.MyDialog;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
@@ -122,6 +123,14 @@ public class OrderSolvedActivity extends BaseActivity {
 
                     @Override
                     public void onNext(TaskDetailBean taskDetailBean) {
+                        pikey = taskDetailBean.getPIKEY();
+                        taskId = taskDetailBean.getCURRENT_TASKID();
+                        taskNodeType = taskDetailBean.getTaskNodeType();
+                        Map<String, String> map = new HashMap<>();
+                        map.put("taskNodeType", taskNodeType);
+                        map.put("PIKEY", pikey);
+                        map.put("taskId", taskId);
+                        WorkOrderDataManager.newInstance().setMapInit(map);
                         List datas = PullPaseXmlUtil.pase(taskDetailBean.getFormDocument());
                         wodv_solved.refreshRealmData(datas);
 //                        crossfade();

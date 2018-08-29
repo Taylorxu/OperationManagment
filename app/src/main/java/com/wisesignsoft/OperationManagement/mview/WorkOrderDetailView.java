@@ -6,11 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wisesignsoft.OperationManagement.BaseActivity;
 import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
+import com.wisesignsoft.OperationManagement.bean.BMForm;
 import com.wisesignsoft.OperationManagement.bean.DictDatas;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
+import com.wisesignsoft.OperationManagement.bean.LinkConditionData;
 import com.wisesignsoft.OperationManagement.bean.Section;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
@@ -93,11 +97,27 @@ public class WorkOrderDetailView extends LinearLayout {
             @Override
             public void execute(Realm realm) {
                 RealmResults<Section> sectionRealmList = realm.where(Section.class).findAll();
+                RealmResults<BMForm> bmForms = realm.where(BMForm.class).findAll();
                 sectionRealmList.deleteAllFromRealm();
+                bmForms.deleteAllFromRealm();
             }
         });
         for (final Object o : datas) {
-            if (o instanceof Section) {
+            if (o instanceof BMForm) {
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        BMForm bmForm = ((BMForm) o);
+                        realm.insert(bmForm);
+                    }
+                });
+            } else if (o instanceof BMFormDataLinkage) {//控件的值之间存在互相影响的根据数据集
+                String str = ((BMFormDataLinkage) o).getDataLinkageJson();
+                Gson gson = new Gson();
+                List<Map<String, Object>> links = gson.fromJson(str, new TypeToken<List<Map<String, Object>>>() {
+                }.getType());
+                refreshLinkConditionData(realm, links);
+            } else if (o instanceof Section) {// 控件 数据集
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
@@ -113,15 +133,39 @@ public class WorkOrderDetailView extends LinearLayout {
                         realm.copyToRealmOrUpdate(section);
                     }
                 });
-
-            } else {
-                //TODO 其它
             }
         }
         realm.close();
         fillComponents();
     }
 
+    /**
+     * 保存 联动数据条件
+     *
+     * @param realm
+     * @param links
+     */
+    private void refreshLinkConditionData(Realm realm, List<Map<String, Object>> links) {
+        final List<LinkConditionData> conditionDataList = new ArrayList<>();
+        for (int i = 0; i < links.size(); i++) {
+            Map<String, Object> map = links.get(i);
+            String woId = (String) map.get("ID");
+            String methodName = (String) map.get("methodName");
+            String expreDesc = (String) map.get("expreDesc");
+            LinkConditionData linkConditionData = new LinkConditionData();
+            linkConditionData.setId(i);
+            linkConditionData.setWorkOrderId(woId);
+            linkConditionData.setMethodName(methodName);
+            linkConditionData.setExpreDesc(expreDesc);
+            conditionDataList.add(linkConditionData);
+        }
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.insertOrUpdate(conditionDataList);
+            }
+        });
+    }
 
     /**
      * 根据 条件 渲染组件

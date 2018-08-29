@@ -2,9 +2,16 @@ package com.wisesignsoft.OperationManagement.db;
 
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wisesignsoft.OperationManagement.Protocol;
+import com.wisesignsoft.OperationManagement.bean.BMForm;
 import com.wisesignsoft.OperationManagement.bean.DictDatas;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
+import com.wisesignsoft.OperationManagement.bean.LinkConditionData;
+import com.wisesignsoft.OperationManagement.bean.LinkParameter;
+import com.wisesignsoft.OperationManagement.bean.LinkServiceData;
+import com.wisesignsoft.OperationManagement.bean.Section;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
 import com.wisesignsoft.OperationManagement.net.response.DataTypeSelector;
@@ -17,7 +24,9 @@ import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.realm.ProxyState;
 import io.realm.Realm;
@@ -30,12 +39,12 @@ import rx.schedulers.Schedulers;
 
 public class WorkOrderDataManager {
     private static WorkOrderDataManager manager;
-
-    private static List<DictDatas> dictDatasBeanList;
+    private static Map<String, String> parameterMap = new HashMap<>();
 
     public static WorkOrderDataManager newInstance() {
-        if (manager == null)
+        if (manager == null) {
             manager = new WorkOrderDataManager();
+        }
         return manager;
     }
 
@@ -59,7 +68,7 @@ public class WorkOrderDataManager {
     }
 
     /**
-     * 字典数据
+     * 获取接口字典数据
      */
     public void getAllValidDictData() {
 
@@ -97,6 +106,11 @@ public class WorkOrderDataManager {
                 });
     }
 
+    /**
+     * 更新realm的字典数据
+     *
+     * @param dictDatas
+     */
     public void refreshAllValidDictData(final List<DictDatas> dictDatas) {
 
         final Realm realm = Realm.getDefaultInstance();
@@ -117,16 +131,6 @@ public class WorkOrderDataManager {
                 }
             });
         }
-
-      /*  RealmResults<DictDatas> datas = realm.where(DictDatas.class).findAll();
-        for (DictDatas datas1 : datas) {
-            LogUtil.log(datas1.getKey() + "===");
-        }*/
-     /*   RealmResults<DictDatasBean> dictDatasBeans = realm.where(DictDatasBean.class).findAll();
-        for (DictDatasBean d : dictDatasBeans) {
-            LogUtil.log(d.getDictName() + "++++" + d);
-        }
-*/
         realm.close();
     }
 
@@ -156,7 +160,7 @@ public class WorkOrderDataManager {
      * @param value
      * @return
      */
-    public void getDicValue(final String value, final CallBack<String> callBack) {
+    public void getDicValueById(final String value, final CallBack<String> callBack) {
         if (TextUtils.isEmpty(value)) {
             callBack.onResponse("");
             return;
@@ -170,5 +174,173 @@ public class WorkOrderDataManager {
         realm.close();
     }
 
+    /**
+     * 联动被触发后，寻找相应的控件并赋值
+     *
+     * @param trigger
+     */
+    public void setValueForLinkWorkOrder(final WorkOrder trigger) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        //根据WorkOrder。ID 查找出相应的要被改变值的控件dmAttrName
+        RealmResults<LinkConditionData> results = realm.where(LinkConditionData.class).equalTo("workOrderId", trigger.getID()).findAll();
+        BMForm bmForm = realm.where(BMForm.class).findFirst();
+        realm.commitTransaction();
+        realm.close();
+        if (results.isLoaded() && results.size() > 0) {
+            for (LinkConditionData data : results) {
+                getLinkServiceData(bmForm.getBmModelName(), data);
+            }
+        }
 
+    }
+
+    /**
+     * 获取整个工单的数据集
+     *
+     * @return
+     */
+    public Map<String, String> getReturnStringModel() {
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<WorkOrder> results = realm.where(WorkOrder.class).findAll();
+                if (results.isLoaded())
+                    for (WorkOrder wo : results) {
+                        if (!TextUtils.isEmpty(wo.getDmAttrName())) {
+                            parameterMap.put(wo.getDmAttrName(), wo.getValue());
+                        }
+                    }
+            }
+        });
+        return parameterMap;
+    }
+
+    /**
+     * 获取联动数据
+     * {@link #getLinkServiceData.formValue } Map formValue 内容是获取整个界面上所有组件 {@link WorkOrder.dmAttrName} --->（key） 和 {@link WorkOrder.value}--->(value)的值（数据量很是庞大）
+     * 但接口其实真正用到的数据与控件的联动表达式{@link WorkOrder.expreDesc } 是大致吻合的。
+     * 例如，事件测试单 "应用影响" 下拉框 ，该workOrder 对应（根据{@link WorkOrder.ID }查找对应）的联动表达式如下：
+     * <p>
+     * {expreDesc=[
+     * {
+     * 'customerDmAttrName':'OBJ_SYSFVIP',
+     * 'systemDmAttrName':'OBJ_SYXTJB',
+     * 'useDmAttrName':'OBJ_SYYYYX',
+     * 'conServerDmAttrName':'OBJ_SCA',
+     * 'levelGradeDmAttrName':'OBJ_SLEVER',
+     * 'solveTimeLimitDmAttrName':'OBJ_JFT',
+     * 'getTimeDmAttrName':'OBJ_ATST',
+     * 'objPriority':'OBJ_YXJA'
+     * }
+     * ] , mx_internal_uid=6F9123C3-4EDC-CF31-3852-5BB6E4CEE620, methodName=thingLinkLevelGrade, ID=combobox_29, methodDesc=事件流程首页 联动服务等级三个字段, nodeType=ComboBox, name=应用影响}
+     * </>
+     * <p>
+     * ￥￥￥￥￥￥￥￥接口实际需要的工单部分数据参数 如下：
+     * {@link LinkParameter.attrsMap}
+     * "attrsMap":{
+     * "OBJ_SYXTJB":"xtjb:5f268603-59db-4afe-a31b-9e726f17227f",
+     * "OBJ_SRT":"SR_TABLE:b5a54f0b-7756-41cc-bbbc-b5f36cd5880f",
+     * "OBJ_SYYYYX":"yyyx:4b16ccb7-16bb-4ede-b522-abe344571ec6",
+     * "OBJ_SYSFVIP":"khlb:5c4cec68-0ea3-4fce-9005-913245393749"
+     * }
+     * OBJ_SRT 是 '项目选择'组件（关键词ResModelSelect）{@link WorkOrder.dmAttrName} 的值,显然不在上面的表达式里面，所以不能做到筛选只能全拿给后台。
+     * <p>
+     * 接口invokeDataLinkageMethod 请求的参数 链接 <hr>https://pan.baidu.com/s/1b6nRrJc41Q2Q-pGO3AqVWQ</> 密码: fw7b
+     * 事件单详情数据链接:  <hr>https://pan.baidu.com/s/1Q55eAj-slHweRtVoXSKUKQ </> 密码: u5u3
+     *
+     * @param bmModelName
+     * @param conditionData
+     */
+    private void getLinkServiceData(String bmModelName, LinkConditionData conditionData) {
+        Map<String, String> formValue = getReturnStringModel();
+        final Gson gson = new Gson();
+        List<String> listData = new ArrayList<>();
+        LinkParameter bean = new LinkParameter(bmModelName, conditionData.getExpreDesc(), formValue);
+        String b = gson.toJson(bean);
+        listData.add(conditionData.getMethodName());  //MethodName 对应arg0（后台拿参数的顺序） 不能变
+        listData.add(b);
+        ApiService.Creator.get().invokeDataLinkageMethod(RequestBody.getgEnvelope(Protocol.business_name_space, listData, Protocol.invokeDataLinkageMethod))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(new FlatMapResponse<BaseDataResponse<List<LinkServiceData>>>())
+                .flatMap(new FlatMapTopRes<List<LinkServiceData>>(DataTypeSelector.RE))
+                .subscribe(new Subscriber<List<LinkServiceData>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
+                        e.printStackTrace();
+
+                    }
+
+                    @Override
+                    public void onNext(final List<LinkServiceData> response) {
+                        if (response != null && response.size() > 0) {
+                            findLinkWorkOrder(response);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 根据invokeDataLinkageMethod 返回的数据去匹配相应的WorkOrder
+     *
+     * @param datas
+     */
+    private void findLinkWorkOrder(List<LinkServiceData> datas) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        for (LinkServiceData bean : datas) {
+            modifyWorkOrderKeyField(bean, realm);
+        }
+        realm.commitTransaction();
+        realm.close();
+    }
+
+    /**
+     * 查找到workOrder ，修改相应的字段
+     *
+     * @param bean
+     * @param realm
+     */
+    private void modifyWorkOrderKeyField(final LinkServiceData bean, Realm realm) {
+        int type = bean.getControlType();
+        String dmAttrName = bean.getDmAttrName();
+        boolean hasEdit = bean.isHasEdit();
+        boolean hasRequired = bean.isHasRequired();
+        boolean hasVisble = bean.isHasVisible();
+        String value = bean.getValue();
+
+        WorkOrder wo = realm.where(WorkOrder.class).equalTo("dmAttrName", dmAttrName).findFirst();
+        if (wo != null)
+            switch (type) {
+                case 1:
+                    wo.setValue(value);
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    wo.setModified(hasEdit);
+                    break;
+                case 4:
+                    wo.setVisible(hasVisble);
+                    break;
+                case 5:
+                    wo.setRequired(hasRequired);
+                    break;
+            }
+
+    }
+
+
+    public void setMapInit(Map<String, String> mapInit) {
+        this.parameterMap = mapInit;
+    }
 }

@@ -55,7 +55,7 @@ public class TreeSelectionView extends RelativeLayout implements RealmObjectChan
         final String woId = wo.getID();
         String title = wo.getName();
         final String content = wo.getValue();
-        WorkOrderDataManager.newInstance().getDicValue(content, new CallBack<String>() {
+        WorkOrderDataManager.newInstance().getDicValueById(content, new CallBack<String>() {
             @Override
             public void onResponse(String dicValue) {
                 if (!TextUtils.isEmpty(dicValue)) {

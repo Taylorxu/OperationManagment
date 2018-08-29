@@ -5,6 +5,7 @@ import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.bean.AccountInfoBean;
 import com.wisesignsoft.OperationManagement.bean.DictDatas;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
+import com.wisesignsoft.OperationManagement.bean.LinkServiceData;
 import com.wisesignsoft.OperationManagement.bean.ResourcesBean;
 import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
@@ -77,6 +78,7 @@ public interface ApiService {
 
     /**
      * 查询单个字典有效数据
+     *
      * @param requestStr
      * @return
      */
@@ -85,11 +87,20 @@ public interface ApiService {
 
     /**
      * 全部字典数据
+     *
      * @param requestStr
      * @return
      */
     @POST(Protocol.dict_host)
     Observable<Response<BaseDataResponse<List<DictDatas>>>> queryAllValidDictData(@Body String requestStr);
+
+    /**
+     * 联动数据
+     * @param requestStr
+     * @return
+     */
+    @POST(Protocol.business_host)
+    Observable<Response<BaseDataResponse<List<LinkServiceData>>>> invokeDataLinkageMethod(@Body String requestStr);
 
 
     class Creator {

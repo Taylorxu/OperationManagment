@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 import io.realm.ObjectChangeSet;
 import io.realm.RealmObjectChangeListener;
 
-public class BottomView extends RelativeLayout implements View.OnClickListener, RealmObjectChangeListener<WorkOrder> {
+public class BottomView extends RelativeLayout implements RealmObjectChangeListener<WorkOrder> {
     private BaseView baseView;
     private WorkOrder wo;
 
@@ -35,7 +35,7 @@ public class BottomView extends RelativeLayout implements View.OnClickListener, 
     private void init(Context context) {
         View view = LayoutInflater.from(context).inflate(R.layout.bottom_view, this, true);
         baseView = (BaseView) view.findViewById(R.id.bv_bottom_view);
-        baseView.setOnClickListener(this);
+        baseView.setOnClickListener(new ClickListener());
     }
 
     /**
@@ -43,9 +43,10 @@ public class BottomView extends RelativeLayout implements View.OnClickListener, 
      */
     public void setData(final WorkOrder wo) {
         this.wo = wo;
+        wo.addChangeListener(this);
         String title = wo.getName();
         String value = wo.getValue();
-        WorkOrderDataManager.newInstance().getDicValue(value, new CallBack<String>() {
+        WorkOrderDataManager.newInstance().getDicValueById(value, new CallBack<String>() {
             @Override
             public void onResponse(String dicValue) {
                 if (!TextUtils.isEmpty(dicValue)) {
@@ -75,29 +76,28 @@ public class BottomView extends RelativeLayout implements View.OnClickListener, 
         }
     }
 
-    @Override
-    public void onClick(View view) {
-
-        WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new CallBack<List<DictDatasBean>>() {
-            @Override
-            public void onResponse(List<DictDatasBean> dictDatasBeans) {
-                final BottomDialog dialog = new BottomDialog(getContext(), R.style.add_dialog);
-                dialog.setUpData(dictDatasBeans);
-                dialog.setOnTitleClickListener(new BottomDialog.OnTitleClickListener() {
-                    @Override
-                    public void onTitleRightClickListener(String province, String name) {
-                        baseView.setTv_right(name);
-                        WorkOrderDataManager.newInstance().modifyValue(wo.getID(), province);
+    class ClickListener implements OnClickListener {
+        @Override
+        public void onClick(View view) {
+            WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new CallBack<List<DictDatasBean>>() {
+                @Override
+                public void onResponse(List<DictDatasBean> dictDatasBeans) {
+                    final BottomDialog dialog = new BottomDialog(getContext(), R.style.add_dialog);
+                    dialog.setUpData(dictDatasBeans);
+                    dialog.setOnTitleClickListener(new BottomDialog.OnTitleClickListener() {
+                        @Override
+                        public void onTitleRightClickListener(String province, String name) {
+                            WorkOrderDataManager.newInstance().modifyValue(wo.getID(), province);
+                        }
+                    });
+                    if (!dialog.isShowing()) {
+                        dialog.show();
                     }
-                });
-                if (!dialog.isShowing()) {
-                    dialog.show();
                 }
-            }
-        });
-
-
+            });
+        }
     }
+
 
     @Override
     public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
@@ -106,5 +106,6 @@ public class BottomView extends RelativeLayout implements View.OnClickListener, 
         }
         LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
         setData(workOrder);
+        WorkOrderDataManager.newInstance().setValueForLinkWorkOrder(workOrder);
     }
 }
