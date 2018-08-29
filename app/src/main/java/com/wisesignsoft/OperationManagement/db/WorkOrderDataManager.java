@@ -176,6 +176,7 @@ public class WorkOrderDataManager {
 
     /**
      * 联动被触发后，寻找相应的控件并赋值
+     * 会调用 {@link #getLinkServiceData(String, LinkConditionData)}
      *
      * @param trigger
      */
@@ -193,29 +194,6 @@ public class WorkOrderDataManager {
             }
         }
 
-    }
-
-    /**
-     * 获取整个工单的数据集
-     *
-     * @return
-     */
-    public Map<String, String> getReturnStringModel() {
-
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<WorkOrder> results = realm.where(WorkOrder.class).findAll();
-                if (results.isLoaded())
-                    for (WorkOrder wo : results) {
-                        if (!TextUtils.isEmpty(wo.getDmAttrName())) {
-                            parameterMap.put(wo.getDmAttrName(), wo.getValue());
-                        }
-                    }
-            }
-        });
-        return parameterMap;
     }
 
     /**
@@ -291,6 +269,7 @@ public class WorkOrderDataManager {
 
     /**
      * 根据invokeDataLinkageMethod 返回的数据去匹配相应的WorkOrder
+     * 会调用 {@link #modifyWorkOrderKeyField(LinkServiceData, Realm)}
      *
      * @param datas
      */
@@ -305,7 +284,7 @@ public class WorkOrderDataManager {
     }
 
     /**
-     * 查找到workOrder ，修改相应的字段
+     * 根据联动数据查找到workOrder ，修改相应的字段
      *
      * @param bean
      * @param realm
@@ -342,5 +321,28 @@ public class WorkOrderDataManager {
 
     public void setMapInit(Map<String, String> mapInit) {
         this.parameterMap = mapInit;
+    }
+
+    /**
+     * 获取整个工单的数据集
+     *
+     * @return
+     */
+    public Map<String, String> getReturnStringModel() {
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<WorkOrder> results = realm.where(WorkOrder.class).findAll();
+                if (results.isLoaded())
+                    for (WorkOrder wo : results) {
+                        if (!TextUtils.isEmpty(wo.getDmAttrName())) {
+                            parameterMap.put(wo.getDmAttrName(), wo.getValue());
+                        }
+                    }
+            }
+        });
+        return parameterMap;
     }
 }
