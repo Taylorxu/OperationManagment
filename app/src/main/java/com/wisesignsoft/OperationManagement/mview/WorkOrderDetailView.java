@@ -81,7 +81,6 @@ public class WorkOrderDetailView extends LinearLayout {
                 createCompoent(viewName, context, wo, sectionView);
             }
         }
-
         realm.close();
     }
 
@@ -207,6 +206,26 @@ public class WorkOrderDetailView extends LinearLayout {
                 sectionView.getLl_section_view().addView(bottomView);
                 bottomView.setData(wo);
                 break;
+            case "DataDisplayUser":    //人员显示组件
+                DataDisplayUserView dataDisplayUserView = new DataDisplayUserView(context);
+                sectionView.getLl_section_view().addView(dataDisplayUserView);
+                dataDisplayUserView.setData(wo);
+                break;
+            case "NumericStepper":  //数字组件
+                NumberView numberView = new NumberView(context);
+                sectionView.getLl_section_view().addView(numberView);
+                numberView.setData(wo);
+                break;
+            case "Position"://工程师位置数据显示组件
+                PositionView positionView = new PositionView(context);
+                sectionView.getLl_section_view().addView(positionView);
+                positionView.setData(wo);
+                break;
+            case "nextNode":
+                NoteButtonView noteButtonView = new NoteButtonView(context);
+                sectionView.getLl_section_view().addView(noteButtonView);
+                break;
+
         }
     }
 

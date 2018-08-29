@@ -42,8 +42,23 @@ public interface ApiService {
     @POST(Protocol.yxyw_host)
     Observable<Response<BaseDataResponse<List<ResourcesBean>>>> queryUserResource(@Body String requestStr);
 
+    /**
+     * 查询账号信息by账号
+     *
+     * @param requestStr
+     * @return
+     */
     @POST(Protocol.yxyw_host)
     Observable<Response<BaseDataResponse<AccountInfoBean>>> queryValidUsersByAccount(@Body String requestStr);
+
+    /**
+     * 根据ID查询，返回的是list，真有意思
+     *
+     * @param requestStr
+     * @return
+     */
+    @POST(Protocol.yxyw_host)
+    Observable<Response<BaseDataResponse<List<AccountInfoBean>>>> queryValidUsersById(@Body String requestStr);
 
     @POST(Protocol.yxyw_host)
     Observable<Response<BaseDataResponse<String>>> queryUnhandleProcessCount(@Body String requestStr);
@@ -96,6 +111,7 @@ public interface ApiService {
 
     /**
      * 联动数据
+     *
      * @param requestStr
      * @return
      */

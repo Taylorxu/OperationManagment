@@ -18,12 +18,12 @@ public class MySharedpreferences {
     static SharedPreferences statusSp = context.getSharedPreferences(Constant.STATUSINFO, Activity.MODE_PRIVATE);
     /*服务器地址*/
     static SharedPreferences serverSp = context.getSharedPreferences(Constant.SERVERURL, Activity.MODE_PRIVATE);
+    static SharedPreferences locationSp = context.getSharedPreferences(Constant.LOCATION, Activity.MODE_PRIVATE);
 
     /*除了服务器地址，其他都清空了*/
     public static void clear() {
         statusSp.edit().clear().commit();
     }
-
 
 
     /**
@@ -54,6 +54,17 @@ public class MySharedpreferences {
     public static void putMapStatusBoolean(boolean is) {
         MySharedpreferences.putStatusBoolean(Constant.ISDING, is);
     }
+
+    public static String getLocation() {
+        String location = locationSp.getString(Constant.ADDRESS, "");
+        return location;
+    }
+
+
+    public static void putLocation(String location) {
+        locationSp.edit().putString(Constant.ADDRESS, location).commit();
+    }
+
 
     /**
      * 获取登录状态
