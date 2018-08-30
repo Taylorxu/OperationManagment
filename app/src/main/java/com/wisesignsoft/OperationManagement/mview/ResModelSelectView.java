@@ -10,15 +10,21 @@ import com.google.gson.Gson;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.ResModeValue;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.ui.activity.SingleResModelSelectorActivity;
 import com.wisesignsoft.OperationManagement.utils.GsonHelper;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import io.realm.ObjectChangeSet;
+import io.realm.RealmObjectChangeListener;
+
 /**
  * 台账单选组件
  */
-public class ResModelSelectView extends FrameLayout {
+public class ResModelSelectView extends FrameLayout implements RealmObjectChangeListener<WorkOrder> {
 
     private BaseView bv_res_model_select;
     private ResModeValue resModelValueJson;
@@ -50,6 +56,7 @@ public class ResModelSelectView extends FrameLayout {
 
     public void setDate(WorkOrder wo) {
         this.workOrder = wo;
+        workOrder.addChangeListener(this);
         String title = wo.getName();
         if (!TextUtils.isEmpty(title)) {
             if (wo.isRequired()) {
@@ -68,5 +75,12 @@ public class ResModelSelectView extends FrameLayout {
         resModelValueJson = gson.fromJson(att, ResModeValue.class);
 
 
+    }
+
+    @Override
+    public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
+        if (changeSet.isDeleted()) return;
+        setDate(workOrder);
+        WorkOrderDataManager.newInstance().setValueForLinkWorkOrder(workOrder);
     }
 }

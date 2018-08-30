@@ -46,16 +46,22 @@ public class BottomView extends RelativeLayout implements RealmObjectChangeListe
         wo.addChangeListener(this);
         String title = wo.getName();
         String value = wo.getValue();
-        WorkOrderDataManager.newInstance().getDicValueById(value, new CallBack<String>() {
-            @Override
-            public void onResponse(String dicValue) {
-                if (!TextUtils.isEmpty(dicValue)) {
-                    baseView.setTv_right(dicValue);
-                } else {
-                    baseView.setTv_right("");
-                }
+        if (!TextUtils.isEmpty(value)) {//用户选择的时候value值是字典的ID
+            if (value.indexOf(":")>-1) {
+                WorkOrderDataManager.newInstance().getDicValueById(value, new CallBack<String>() {
+                    @Override
+                    public void onResponse(String dicValue) {
+                        if (!TextUtils.isEmpty(dicValue)) {
+                            baseView.setTv_right(dicValue);
+                        }
+                    }
+                });
+            } else {//value 是字典的值，遇到 ‘项目选择’的情况，WorkOrder的value是被修改成 字典值
+                baseView.setTv_right(value);
             }
-        });
+        } else {
+            baseView.setTv_right("");
+        }
 
 
         if (!TextUtils.isEmpty(title)) {

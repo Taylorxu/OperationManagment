@@ -49,6 +49,7 @@ public class SingleTextView extends LinearLayout implements RealmObjectChangeLis
      */
     public void setData(WorkOrder wo) {
         this.wo = wo;
+        wo.addChangeListener(this);
         String title = wo.getName();
         String content = wo.getValue();
         if (!TextUtils.isEmpty(title)) {

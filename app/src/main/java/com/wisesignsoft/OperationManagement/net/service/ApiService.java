@@ -111,6 +111,14 @@ public interface ApiService {
     @POST(Protocol.dict_host)
     Observable<Response<BaseDataResponse<List<DictDatas>>>> queryAllValidDictData(@Body String requestStr);
 
+  /*  *//**
+     * 联动数据
+     *
+     * @param requestStr
+     * @return
+     *//*
+    @POST(Protocol.business_host)
+    Observable<Response<BaseDataResponse<List<LinkServiceData>>>> invokeDataLinkageMethod(@Body String requestStr);*/
     /**
      * 联动数据
      *
@@ -118,7 +126,7 @@ public interface ApiService {
      * @return
      */
     @POST(Protocol.business_host)
-    Observable<Response<BaseDataResponse<List<LinkServiceData>>>> invokeDataLinkageMethod(@Body String requestStr);
+    Observable<Response<BaseDataResponse<String>>> invokeDataLinkageMethod(@Body String requestStr);
 
     //查询业务模型 by name
     @POST(Protocol.ci_host)

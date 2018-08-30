@@ -120,7 +120,7 @@ public class SingleResModelSelectorActivity extends AppCompatActivity implements
             @Override
             public void setOnClick(int position) {
                 WorkOrderDataManager.newInstance().modifyValue(id, datas.get(position).get("OBJECTID"));
-//                WorkOrderDataManager.getManager().setResModelValueByFromOrTo(bean, datas.get(position));
+                WorkOrderDataManager.newInstance().setResModelValueByFromOrTo(bean, datas.get(position));
                 finish();
             }
         });

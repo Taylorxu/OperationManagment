@@ -1,6 +1,7 @@
 package com.wisesignsoft.OperationManagement.db;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -11,6 +12,7 @@ import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.LinkConditionData;
 import com.wisesignsoft.OperationManagement.bean.LinkParameter;
 import com.wisesignsoft.OperationManagement.bean.LinkServiceData;
+import com.wisesignsoft.OperationManagement.bean.ResModeValue;
 import com.wisesignsoft.OperationManagement.bean.Section;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
@@ -25,8 +27,10 @@ import com.wisesignsoft.OperationManagement.utils.LogUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.realm.ProxyState;
 import io.realm.Realm;
@@ -169,7 +173,8 @@ public class WorkOrderDataManager {
         if (!realm.isInTransaction()) realm.beginTransaction();
         RealmQuery<DictDatasBean> realmQuery = realm.where(DictDatasBean.class);
         DictDatasBean dictDatasBean = realmQuery.equalTo("dictId", value).findFirst();
-        callBack.onResponse(dictDatasBean.getDictName());
+        if (dictDatasBean != null)
+            callBack.onResponse(dictDatasBean.getDictName());
         if (realm.isInTransaction()) realm.commitTransaction();
         realm.close();
     }
@@ -182,7 +187,7 @@ public class WorkOrderDataManager {
      */
     public void setValueForLinkWorkOrder(final WorkOrder trigger) {
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (!realm.isInTransaction()) realm.beginTransaction();
         //根据WorkOrder。ID 查找出相应的要被改变值的控件dmAttrName
         RealmResults<LinkConditionData> results = realm.where(LinkConditionData.class).equalTo("workOrderId", trigger.getID()).findAll();
         BMForm bmForm = realm.where(BMForm.class).findFirst();
@@ -243,9 +248,9 @@ public class WorkOrderDataManager {
         ApiService.Creator.get().invokeDataLinkageMethod(RequestBody.getgEnvelope(Protocol.business_name_space, listData, Protocol.invokeDataLinkageMethod))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(new FlatMapResponse<BaseDataResponse<List<LinkServiceData>>>())
-                .flatMap(new FlatMapTopRes<List<LinkServiceData>>(DataTypeSelector.RE))
-                .subscribe(new Subscriber<List<LinkServiceData>>() {
+                .flatMap(new FlatMapResponse<BaseDataResponse<String>>())
+                .flatMap(new FlatMapTopRes<String>(DataTypeSelector.RE))
+                .subscribe(new Subscriber<String>() {
                     @Override
                     public void onCompleted() {
 
@@ -259,9 +264,11 @@ public class WorkOrderDataManager {
                     }
 
                     @Override
-                    public void onNext(final List<LinkServiceData> response) {
-                        if (response != null && response.size() > 0) {
-                            findLinkWorkOrder(response);
+                    public void onNext(final String response) {
+                        if (!TextUtils.isEmpty(response)) {
+                            List<LinkServiceData> datas = gson.fromJson(response, new TypeToken<List<LinkServiceData>>() {
+                            }.getType());
+                            findLinkWorkOrder(datas);
                         }
                     }
                 });
@@ -344,5 +351,29 @@ public class WorkOrderDataManager {
             }
         });
         return parameterMap;
+    }
+
+    /**
+     * 逻辑描述：先根据from找到需要赋值的控件，然后根据to匹配map的key取出对应的value，最后把value赋值到控件里
+     * 有些组件的值是走此方式给其它组件赋值，而非依靠联动表达式。如 ‘项目选择’ ---客户编号 等组件需要走此方式
+     */
+    public void setResModelValueByFromOrTo(List<ResModeValue.ConfigValueJsonBean> configValueJson, Map<String, String> data) {
+        Realm realm = Realm.getDefaultInstance();
+
+        for (ResModeValue.ConfigValueJsonBean model : configValueJson) {
+            String to = model.getToFmAttrName().getDmAttrName();
+            final String from = model.getFromDmAttrName().getDmAttrName();
+            final String value = data.get(to);
+            realm.executeTransactionAsync(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    WorkOrder workOrder = realm.where(WorkOrder.class).equalTo("dmAttrName", from).findFirst();
+                    workOrder.setValue(value);
+                }
+            });
+
+        }
+
+        realm.close();
     }
 }
