@@ -228,7 +228,13 @@ public class WorkOrderDetailView extends LinearLayout {
             case "ResModelSelect":  //模型数据选择组件
                 ResModelSelectView resModelSelectView = new ResModelSelectView(context);
                 sectionView.getLl_section_view().addView(resModelSelectView);
-                resModelSelectView.setDate(wo);
+                resModelSelectView.setData(wo);
+                break;
+            case "RadioButtons":    //单选钮
+                SingleSelectView singleSelectView = new SingleSelectView(context);
+                sectionView.getLl_section_view().addView(singleSelectView);
+                singleSelectView.setData(wo);
+
                 break;
 
         }

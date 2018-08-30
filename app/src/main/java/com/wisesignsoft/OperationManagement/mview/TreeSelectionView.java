@@ -155,5 +155,6 @@ public class TreeSelectionView extends RelativeLayout implements RealmObjectChan
         }
         LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
         setData(workOrder);
+        WorkOrderDataManager.newInstance().setValueForLinkWorkOrder(workOrder);
     }
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
 import javax.annotation.Nullable;
@@ -95,5 +96,6 @@ public class SingleTextView extends LinearLayout implements RealmObjectChangeLis
         }
         LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
         setData(workOrder);
+        WorkOrderDataManager.newInstance().setValueForLinkWorkOrder(workOrder);
     }
 }

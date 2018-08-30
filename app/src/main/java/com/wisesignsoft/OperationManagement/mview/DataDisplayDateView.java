@@ -30,6 +30,7 @@ public class DataDisplayDateView extends LinearLayout implements RealmObjectChan
     }
 
     public void setData(WorkOrder wo) {
+        wo.addChangeListener(this);
         String title = wo.getName() + "：";
         String content = wo.getValue();
         if (!TextUtils.isEmpty(title)) {

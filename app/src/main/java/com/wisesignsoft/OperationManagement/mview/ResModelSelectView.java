@@ -54,7 +54,7 @@ public class ResModelSelectView extends FrameLayout implements RealmObjectChange
         });
     }
 
-    public void setDate(WorkOrder wo) {
+    public void setData(WorkOrder wo) {
         this.workOrder = wo;
         workOrder.addChangeListener(this);
         String title = wo.getName();
@@ -80,7 +80,7 @@ public class ResModelSelectView extends FrameLayout implements RealmObjectChange
     @Override
     public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
         if (changeSet.isDeleted()) return;
-        setDate(workOrder);
+        setData(workOrder);
         WorkOrderDataManager.newInstance().setValueForLinkWorkOrder(workOrder);
     }
 }

@@ -99,6 +99,7 @@ public class MultTreeSelectionView extends RelativeLayout implements RealmObject
 
     public void setData(final WorkOrder wo) {
         this.wo = wo;
+        wo.addChangeListener(this);
         String title = wo.getName();
         final String content = wo.getValue();
         final String param = wo.getSrclib();
@@ -263,5 +264,6 @@ public class MultTreeSelectionView extends RelativeLayout implements RealmObject
         }
         LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
         setData(workOrder);
+        WorkOrderDataManager.newInstance().setValueForLinkWorkOrder(workOrder);
     }
 }

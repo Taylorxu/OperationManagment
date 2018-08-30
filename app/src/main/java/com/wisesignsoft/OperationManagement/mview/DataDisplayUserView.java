@@ -54,6 +54,7 @@ public class DataDisplayUserView extends RelativeLayout implements RealmObjectCh
     }
 
     public void setData(WorkOrder wo) {
+        wo.addChangeListener(this);
         String title = wo.getName();
         String content = wo.getValue();
         wo.addChangeListener(this);

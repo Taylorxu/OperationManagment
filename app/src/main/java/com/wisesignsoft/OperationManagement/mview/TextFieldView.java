@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
 import javax.annotation.Nullable;
@@ -38,6 +39,7 @@ public class TextFieldView extends RelativeLayout implements RealmObjectChangeLi
 
     public void setData(WorkOrder wo) {
         this.wo = wo;
+        wo.addChangeListener(this);
         String title = wo.getName();
         String content = wo.getValue();
         if (!TextUtils.isEmpty(title)) {
@@ -76,5 +78,6 @@ public class TextFieldView extends RelativeLayout implements RealmObjectChangeLi
         }
         LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
         setData(workOrder);
+        WorkOrderDataManager.newInstance().setValueForLinkWorkOrder(workOrder);
     }
 }

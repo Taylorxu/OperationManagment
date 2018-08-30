@@ -28,7 +28,7 @@ import io.realm.RealmObjectChangeListener;
 /**
  * 时间日期选择组件
  */
-public class TimeView extends LinearLayout implements View.OnClickListener,RealmObjectChangeListener<WorkOrder> {
+public class TimeView extends LinearLayout implements View.OnClickListener, RealmObjectChangeListener<WorkOrder> {
     private TextView data_title;
     private TextView data_content;
     private WorkOrder wo;
@@ -49,6 +49,7 @@ public class TimeView extends LinearLayout implements View.OnClickListener,Realm
 
     public void setData(WorkOrder wo) {
         this.wo = wo;
+        wo.addChangeListener(this);
         String title = wo.getName();
         String content = wo.getValue();
         if (!TextUtils.isEmpty(title)) {
