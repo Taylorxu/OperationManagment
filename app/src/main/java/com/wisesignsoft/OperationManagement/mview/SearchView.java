@@ -16,11 +16,8 @@ import android.widget.TextView;
 
 import com.wisesignsoft.OperationManagement.R;
 
-/**
- * Created by ycs on 2016/11/24.
- */
 
-public class SeachView extends RelativeLayout implements View.OnClickListener, TextView.OnEditorActionListener {
+public class SearchView extends RelativeLayout implements View.OnClickListener, TextView.OnEditorActionListener {
 
     private RelativeLayout rl_search;
     private LinearLayout ll_search;
@@ -30,7 +27,7 @@ public class SeachView extends RelativeLayout implements View.OnClickListener, T
     private ISearchView iSearchView;
     private TextView tv_test;
 
-    public SeachView(Context context, AttributeSet attrs) {
+    public SearchView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }

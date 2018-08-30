@@ -102,7 +102,7 @@ public class WheelRecycle {
 	}
 
 	/**
-	 * Adds view to specified cache. Creates a cache list if it is null.
+	 * Adds view to specified cache. Creates AttrDefineListBean cache list if it is null.
 	 * @param view the view to be cached
 	 * @param cache the cache list
 	 * @return the cache list

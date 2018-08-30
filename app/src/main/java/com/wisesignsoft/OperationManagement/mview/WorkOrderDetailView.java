@@ -225,6 +225,11 @@ public class WorkOrderDetailView extends LinearLayout {
                 NoteButtonView noteButtonView = new NoteButtonView(context);
                 sectionView.getLl_section_view().addView(noteButtonView);
                 break;
+            case "ResModelSelect":  //模型数据选择组件
+                ResModelSelectView resModelSelectView = new ResModelSelectView(context);
+                sectionView.getLl_section_view().addView(resModelSelectView);
+                resModelSelectView.setDate(wo);
+                break;
 
         }
     }

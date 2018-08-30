@@ -3,10 +3,12 @@ package com.wisesignsoft.OperationManagement.net.service;
 
 import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.bean.AccountInfoBean;
+import com.wisesignsoft.OperationManagement.bean.BusinessModel;
 import com.wisesignsoft.OperationManagement.bean.DictDatas;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.LinkServiceData;
 import com.wisesignsoft.OperationManagement.bean.ResourcesBean;
+import com.wisesignsoft.OperationManagement.bean.SingleResModelListData;
 import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
 import com.wisesignsoft.OperationManagement.bean.User;
@@ -117,6 +119,13 @@ public interface ApiService {
      */
     @POST(Protocol.business_host)
     Observable<Response<BaseDataResponse<List<LinkServiceData>>>> invokeDataLinkageMethod(@Body String requestStr);
+
+    //查询业务模型 by name
+    @POST(Protocol.ci_host)
+    Observable<Response<BaseDataResponse<BusinessModel>>> queryModelByBmModelName(@Body String requestStr);
+
+    @POST(Protocol.yxyw_host)
+    Observable<Response<BaseDataResponse<SingleResModelListData>>> queryData(@Body String requestStr);
 
 
     class Creator {

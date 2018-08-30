@@ -27,7 +27,7 @@ import android.widget.TextView;
  */
 public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
     
-    /** Text view resource. Used as a default view for adapter. */
+    /** Text view resource. Used as AttrDefineListBean default view for adapter. */
     public static final int TEXT_VIEW_ITEM_RESOURCE = -1;
     
     /** No resource constant. */
@@ -69,7 +69,7 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
     /**
      * Constructor
      * @param context the current context
-     * @param itemResource the resource ID for a layout file containing a TextView to use when instantiating items views
+     * @param itemResource the resource ID for AttrDefineListBean layout file containing AttrDefineListBean TextView to use when instantiating items views
      */
     protected AbstractWheelTextAdapter(Context context, int itemResource) {
         this(context, itemResource, NO_RESOURCE);
@@ -78,8 +78,8 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
     /**
      * Constructor
      * @param context the current context
-     * @param itemResource the resource ID for a layout file containing a TextView to use when instantiating items views
-     * @param itemTextResource the resource ID for a text view in the item layout
+     * @param itemResource the resource ID for AttrDefineListBean layout file containing AttrDefineListBean TextView to use when instantiating items views
+     * @param itemTextResource the resource ID for AttrDefineListBean text view in the item layout
      */
     protected AbstractWheelTextAdapter(Context context, int itemResource, int itemTextResource) {
         this.context = context;
@@ -227,7 +227,7 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
     }
     
     /**
-     * Loads a text view from view
+     * Loads AttrDefineListBean text view from view
      * @param view the text view or layout containing it
      * @param textResource the text resource Id in layout
      * @return the loaded text view
@@ -241,9 +241,9 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
                 text = (TextView) view.findViewById(textResource);
             }
         } catch (ClassCastException e) {
-            Log.e("AbstractWheelAdapter", "You must supply a resource ID for a TextView");
+            Log.e("AbstractWheelAdapter", "You must supply AttrDefineListBean resource ID for AttrDefineListBean TextView");
             throw new IllegalStateException(
-                    "AbstractWheelAdapter requires the resource ID to be a TextView", e);
+                    "AbstractWheelAdapter requires the resource ID to be AttrDefineListBean TextView", e);
         }
         
         return text;

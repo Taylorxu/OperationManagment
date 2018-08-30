@@ -29,7 +29,7 @@ public interface WheelAdapter {
 	public int getItemsCount();
 	
 	/**
-	 * Gets a wheel item by index.
+	 * Gets AttrDefineListBean wheel item by index.
 	 * 
 	 * @param index the item index
 	 * @return the wheel item text or null

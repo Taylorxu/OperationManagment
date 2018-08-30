@@ -31,7 +31,7 @@ public interface WheelViewAdapter {
 	public int getItemsCount();
 	
 	/**
-	 * Get a View that displays the data at the specified position in the data set
+	 * Get AttrDefineListBean View that displays the data at the specified position in the data set
 	 * 
 	 * @param index the item index
 	 * @param convertView the old view to reuse if possible
@@ -41,7 +41,7 @@ public interface WheelViewAdapter {
 	public View getItem(int index, View convertView, ViewGroup parent);
 
 	/**
-	 * Get a View that displays an empty wheel item placed before the first or after
+	 * Get AttrDefineListBean View that displays an empty wheel item placed before the first or after
 	 * the last wheel item.
 	 * 
 	 * @param convertView the old view to reuse if possible

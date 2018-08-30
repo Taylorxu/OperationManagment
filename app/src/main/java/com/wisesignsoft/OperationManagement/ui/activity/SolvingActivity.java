@@ -16,7 +16,7 @@ import com.wisesignsoft.OperationManagement.mview.EmptyView;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
 import com.wisesignsoft.OperationManagement.mview.RefreshRecyclerView;
-import com.wisesignsoft.OperationManagement.mview.SeachView;
+import com.wisesignsoft.OperationManagement.mview.SearchView;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
@@ -31,10 +31,10 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class SolvingActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, RefreshRecyclerView.OnLoadMoreListener, SeachView.ISearchView {
+public class SolvingActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, RefreshRecyclerView.OnLoadMoreListener, SearchView.ISearchView {
 
     private MyTitle mt_solving;
-    private SeachView sv_solving;
+    private SearchView sv_solving;
     private SwipeRefreshLayout srl_solving;
     private RefreshRecyclerView rrv_solving;
     /*数据的当前页面*/
@@ -69,7 +69,7 @@ public class SolvingActivity extends BaseActivity implements SwipeRefreshLayout.
         loadingView = LoadingView.getLoadingView(this);
         loadingView.show();
         mt_solving = (MyTitle) findViewById(R.id.mt_solving);
-        sv_solving = (SeachView) findViewById(R.id.sv_solving);
+        sv_solving = (SearchView) findViewById(R.id.sv_solving);
         srl_solving = (SwipeRefreshLayout) findViewById(R.id.srl_solving);
         rrv_solving = (RefreshRecyclerView) findViewById(R.id.rrv_solving);
         ev_solving = (EmptyView) findViewById(R.id.ev_solving);
