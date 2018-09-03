@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_select_account"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.wisesignsoft.OperationManagement.mview.MyTitle
+        android:id="@+id/mt_select_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.wisesignsoft.OperationManagement.mview.SearchView
+        android:id="@+id/sv_select_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/home_line" />
+
+        <TextView
+            android:id="@+id/tv_select_account_total"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingLeft="12dp"
+            android:textColor="@color/c4" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_alignParentBottom="true"
+            android:background="@color/home_line" />
+    </RelativeLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl_select_account"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.wisesignsoft.OperationManagement.mview.RefreshRecyclerView
+            android:id="@+id/rrv_select_account"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <com.wisesignsoft.OperationManagement.mview.EmptyView
+        android:id="@+id/ev_select_account"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+</LinearLayout>

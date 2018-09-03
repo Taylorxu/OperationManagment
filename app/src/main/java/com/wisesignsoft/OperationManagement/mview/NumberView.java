@@ -66,7 +66,19 @@ public class NumberView extends LinearLayout implements RealmObjectChangeListene
             et_number.setFocusableInTouchMode(true);
         }
     }
-
+    /**
+     * 列表控件赋值用
+     * @param key
+     * @param value
+     */
+    public void setData(String key,String value){
+        if (!TextUtils.isEmpty(key)) {
+            tv_number.setText(key);
+        }
+        if(!TextUtils.isEmpty(value)){
+            et_number.setText(value);
+        }
+    }
 
     public String getValue() {
         return et_number.getText().toString().trim();

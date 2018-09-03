@@ -4,4 +4,5 @@ public class DataTypeSelector {
     public static String RE = "RETURNVALUE";
     public static String RS = "RESOURCES";
     public static String DA = "DATA";
+    public static String RES = "RESULT";
 }

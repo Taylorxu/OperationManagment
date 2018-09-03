@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_mult_user_choose"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.wisesignsoft.OperationManagement.mview.MyTitle
+        android:id="@+id/mt_mult_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.wisesignsoft.OperationManagement.mview.SearchView
+        android:id="@+id/sv_mult_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mt_mult_user" />
+
+    <LinearLayout
+        android:id="@+id/ll_mult_user"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@id/sv_mult_user"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/home_line" />
+
+        <TextView
+            android:id="@+id/tv_mult_user_total"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textColor="@color/c5"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/home_line" />
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_mult_user"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_mult_user" />
+
+    <com.wisesignsoft.OperationManagement.mview.EmptyView
+        android:id="@+id/ev_select_user"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_mult_user"
+        android:visibility="gone" />
+</RelativeLayout>

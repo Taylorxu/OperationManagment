@@ -1,6 +1,7 @@
 package com.wisesignsoft.OperationManagement.bean;
 
 public class AccountInfoBean {
+    private String userId;
     private String userName;
     private String userJob;
     private String userDept;
@@ -9,6 +10,7 @@ public class AccountInfoBean {
     private String userGender;
     private String userPosition;
     private String userState;
+    private boolean isSelect;
 
     public String getUserName() {
         return userName;
@@ -72,5 +74,21 @@ public class AccountInfoBean {
 
     public void setUserState(String userState) {
         this.userState = userState;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isSelect() {
+        return isSelect;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
     }
 }

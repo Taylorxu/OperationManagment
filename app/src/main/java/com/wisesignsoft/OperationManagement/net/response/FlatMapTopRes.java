@@ -4,6 +4,7 @@ import rx.Observable;
 import rx.functions.Func1;
 
 import static com.wisesignsoft.OperationManagement.net.response.DataTypeSelector.RE;
+import static com.wisesignsoft.OperationManagement.net.response.DataTypeSelector.RES;
 import static com.wisesignsoft.OperationManagement.net.response.DataTypeSelector.RS;
 
 
@@ -22,6 +23,8 @@ public class FlatMapTopRes<Data> implements Func1<BaseDataResponse<Data>, Observ
                 return Observable.just(response.getReturnValue());
             } else if (dataType.equals(RS)) {
                 return Observable.just(response.getResources());
+            }else if(dataType.equals(RES)){
+                return Observable.just(response.getResult());
             }
             return Observable.just(response.getData());
         } else {

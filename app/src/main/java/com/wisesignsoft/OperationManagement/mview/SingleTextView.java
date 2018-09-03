@@ -77,6 +77,27 @@ public class SingleTextView extends LinearLayout implements RealmObjectChangeLis
         }
     }
 
+    /**
+     * 列表控件赋值用
+     *
+     * @param key
+     * @param value
+     */
+    public void setData(String key, String value,boolean request,boolean modify) {
+        if (!TextUtils.isEmpty(key)) {
+            if (request) {
+                tv_single_text.setText(key + " *");
+            } else {
+                tv_single_text.setText(key);
+            }
+        }
+        et_single_text.setEnabled(modify);
+        et_single_text.setFocusable(modify);
+        if (!TextUtils.isEmpty(value)) {
+            et_single_text.setText(value);
+        }
+    }
+
     public String getValue() {
         return et_single_text.getText().toString().trim();
     }

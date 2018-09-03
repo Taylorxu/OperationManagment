@@ -11,6 +11,7 @@ public class BaseDataResponse<T> extends BaseResponse {
     private T data;
     private T returnValue;
     private T resources;
+    private T result;
 
 
     public String getTotal() {
@@ -43,5 +44,13 @@ public class BaseDataResponse<T> extends BaseResponse {
 
     public void setResources(T resources) {
         this.resources = resources;
+    }
+
+    public T getResult() {
+        return result;
+    }
+
+    public void setResult(T result) {
+        this.result = result;
     }
 }

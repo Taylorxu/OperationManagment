@@ -72,6 +72,23 @@ public class WorkOrderDataManager {
     }
 
     /**
+     * 根据ID 获取order的value
+     *
+     * @param orderId
+     * @param newValue
+     */
+    public String getValueById(final String orderId) {
+        String returnValue;
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        WorkOrder workOrder = realm.where(WorkOrder.class).equalTo("ID", orderId).findFirst();
+        returnValue = workOrder.getValue();
+        realm.commitTransaction();
+        realm.close();
+        return returnValue;
+    }
+
+    /**
      * 获取接口字典数据
      */
     public void getAllValidDictData() {

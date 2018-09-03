@@ -65,6 +65,20 @@ public class TextFieldView extends RelativeLayout implements RealmObjectChangeLi
             et.setFocusableInTouchMode(true);
         }
     }
+    /**
+     * 列表控件赋值用
+     *
+     * @param key
+     * @param value
+     */
+    public void setData(String key, String value) {
+        if (!TextUtils.isEmpty(key)) {
+            tv_text_field.setText(key);
+        }
+        if (!TextUtils.isEmpty(value)) {
+            et.setText(value);
+        }
+    }
 
 
     public String getValue() {

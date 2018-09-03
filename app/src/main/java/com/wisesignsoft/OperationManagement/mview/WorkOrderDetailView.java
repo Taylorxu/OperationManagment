@@ -234,9 +234,60 @@ public class WorkOrderDetailView extends LinearLayout {
                 SingleSelectView singleSelectView = new SingleSelectView(context);
                 sectionView.getLl_section_view().addView(singleSelectView);
                 singleSelectView.setData(wo);
-
                 break;
-
+            case "CheckBox"://复选框
+            case "MultList"://多选框
+                CheckBoxView checkBoxView = new CheckBoxView(context);
+                sectionView.getLl_section_view().addView(checkBoxView);
+                checkBoxView.setData(wo);
+                break;
+            case "SingleUserChoose":
+            case "PersonInfo":      //单选人员组件
+                SingleUserChooseView singleUserChooseView = new SingleUserChooseView(context);
+                sectionView.getLl_section_view().addView(singleUserChooseView);
+                singleUserChooseView.setDate(wo);
+                break;
+            case "MultUserChoose":      //多选人员列表组件
+                MultUserChooseView multUserChooseView = new MultUserChooseView(context);
+                sectionView.getLl_section_view().addView(multUserChooseView);
+                multUserChooseView.setData(wo);
+                break;
+            case "DeptChoose":      //部门组件
+                DeptChooseView deptChooseView = new DeptChooseView(context);
+                sectionView.getLl_section_view().addView(deptChooseView);
+                deptChooseView.setData(wo);
+                break;
+            case "SingleRoleChoose"://角色组件
+                if (wo.isMult()) {
+                    MultRoleChooseView multRoleChooseView = new MultRoleChooseView(context);
+                    sectionView.getLl_section_view().addView(multRoleChooseView);
+                    multRoleChooseView.setData(wo);
+                } else {
+                    SingleRoleChooseView singleRoleChooseView = new SingleRoleChooseView(context);
+                    sectionView.getLl_section_view().addView(singleRoleChooseView);
+                    singleRoleChooseView.setData(wo);
+                }
+                break;
+            case "DynamicDataGrid":     //（台账）列表组件
+                MultSelectListView multSelectListView = new MultSelectListView(context);
+                sectionView.getLl_section_view().addView(multSelectListView);
+                multSelectListView.setData(wo);
+                break;
+            case "ResDynamicDataGrid":       //模型数据列表组件，台賬
+                MultSelectResModelView multSelectResModelView = new MultSelectResModelView(context);
+                sectionView.getLl_section_view().addView(multSelectResModelView);
+                multSelectResModelView.setData(wo);
+                break;
+            case "ConfigureChage":      //配置选择组件,單選
+                ConfigureChangeView configureChangeView = new ConfigureChangeView(context);
+                sectionView.getLl_section_view().addView(configureChangeView);
+                configureChangeView.setData(wo);
+                break;
+            case "ResModelComponents"://配置项列表组件，多選配置項
+                MultSelectConfigureChangeView multSelectConfigureChangeView = new MultSelectConfigureChangeView(context);
+                sectionView.getLl_section_view().addView(multSelectConfigureChangeView);
+                multSelectConfigureChangeView.setData(wo);
+                break;
         }
     }
 
