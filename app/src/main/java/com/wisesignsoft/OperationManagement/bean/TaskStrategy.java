@@ -1,10 +1,12 @@
 package com.wisesignsoft.OperationManagement.bean;
 
+import io.realm.RealmObject;
+
 /**
  * Created by ycs on 2017/1/9.
  */
 
-public class TaskStrategy {
+public class TaskStrategy extends RealmObject{
 
     /**
      * strategyKey : assignee

@@ -80,9 +80,6 @@ public class NumberView extends LinearLayout implements RealmObjectChangeListene
         }
     }
 
-    public String getValue() {
-        return et_number.getText().toString().trim();
-    }
 
     @Override
     public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {

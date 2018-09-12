@@ -34,7 +34,6 @@ import rx.schedulers.Schedulers;
 
 /**
  * 人员展示控件
- * Created by ycs on 2016/12/2.
  */
 
 public class DataDisplayUserView extends RelativeLayout implements RealmObjectChangeListener<WorkOrder> {
@@ -57,7 +56,6 @@ public class DataDisplayUserView extends RelativeLayout implements RealmObjectCh
         wo.addChangeListener(this);
         String title = wo.getName();
         String content = wo.getValue();
-        wo.addChangeListener(this);
         if (!TextUtils.isEmpty(title)) {
             if (wo.isRequired()) {
                 tv_data_display_user_text.setText(title + " *");

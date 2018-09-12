@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.wisesignsoft.OperationManagement.Constant;
 import com.wisesignsoft.OperationManagement.MyApplication;
 import com.wisesignsoft.OperationManagement.bean.User;
+import com.wisesignsoft.OperationManagement.net.service.ApiService;
 
 /**
  * Created by Mr.Z on 15/12/11.
@@ -92,6 +93,7 @@ public class MySharedpreferences {
      * @param value
      */
     public static void putServerString(String value) {
+        ApiService.Creator.modifyUrl();
         serverSp.edit().putString(Constant.URL, value).commit();
     }
 

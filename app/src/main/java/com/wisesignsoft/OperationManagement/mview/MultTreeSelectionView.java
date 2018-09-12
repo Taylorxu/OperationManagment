@@ -40,7 +40,6 @@ import rx.schedulers.Schedulers;
 
 /**
  * 树形选择组件 多选
- * Created by xzg on 2018/7/23.
  */
 
 public class MultTreeSelectionView extends RelativeLayout implements RealmObjectChangeListener<WorkOrder> {
@@ -71,7 +70,7 @@ public class MultTreeSelectionView extends RelativeLayout implements RealmObject
             public void setOnIMultChoose(EventClassificationModel bean) {
                 if (wo.isModified()) {
                     dataForAdapter.remove(bean);
-                    adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();//删除某个后更新adapter
                     StringBuffer sb = new StringBuffer();
                     for (int i = 0; i < dataForAdapter.size() - 1; i++) {
                         String id = dataForAdapter.get(i).getDictId();

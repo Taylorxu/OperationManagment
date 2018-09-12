@@ -2,15 +2,17 @@ package com.wisesignsoft.OperationManagement.bean;
 
 import java.util.List;
 
-/**
- * Created by ycs on 2016/12/1.
- */
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
-public class ButtonModel {
-    private String viewName;
+
+public class ButtonModel extends RealmObject {
+    @PrimaryKey
     private String ID;
-    private List<NextNode> nextNode;
     private String value;
+    private String viewName;
+    private RealmList<NextNode> nextNode;
     private TaskStrategy taskStrategy;
 
     public TaskStrategy getTaskStrategy() {
@@ -45,86 +47,12 @@ public class ButtonModel {
         this.ID = ID;
     }
 
-    public List<NextNode> getNextNode() {
+    public RealmList<NextNode> getNextNode() {
         return nextNode;
     }
 
-    public void setNextNode(List<NextNode> nextNode) {
+    public void setNextNode(RealmList<NextNode> nextNode) {
         this.nextNode = nextNode;
     }
 
-    public static class NextNode{
-        private String viewName;
-        private String name;
-        private String to;
-        private String isDefaultPath;
-        private String taskStrategy;
-        private String specificValueUpdate;
-        private String nameDesc;
-        private String isDependCondition;
-
-        public String getViewName() {
-            return viewName;
-        }
-
-        public void setViewName(String viewName) {
-            this.viewName = viewName;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getTo() {
-            return to;
-        }
-
-        public void setTo(String to) {
-            this.to = to;
-        }
-
-        public String getIsDefaultPath() {
-            return isDefaultPath;
-        }
-
-        public void setIsDefaultPath(String isDefaultPath) {
-            this.isDefaultPath = isDefaultPath;
-        }
-
-        public String getTaskStrategy() {
-            return taskStrategy;
-        }
-
-        public void setTaskStrategy(String taskStrategy) {
-            this.taskStrategy = taskStrategy;
-        }
-
-        public String getSpecificValueUpdate() {
-            return specificValueUpdate;
-        }
-
-        public void setSpecificValueUpdate(String specificValueUpdate) {
-            this.specificValueUpdate = specificValueUpdate;
-        }
-
-        public String getNameDesc() {
-            return nameDesc;
-        }
-
-        public void setNameDesc(String nameDesc) {
-            this.nameDesc = nameDesc;
-        }
-
-        public String getIsDependCondition() {
-            return isDependCondition;
-        }
-
-        public void setIsDependCondition(String isDependCondition) {
-            this.isDependCondition = isDependCondition;
-        }
-    }
 }

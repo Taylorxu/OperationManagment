@@ -181,6 +181,10 @@ public interface ApiService {
             }
         }
 
+        public static void modifyUrl() {
+            apiService = null;
+        }
+
         private static Retrofit getRetrofit() {
             return new Retrofit.Builder()
                     .baseUrl(Protocol.getHostUrl())

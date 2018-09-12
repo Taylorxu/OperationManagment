@@ -5,6 +5,7 @@ import android.util.Xml;
 
 import com.wisesignsoft.OperationManagement.bean.BMForm;
 import com.wisesignsoft.OperationManagement.bean.ButtonModel;
+import com.wisesignsoft.OperationManagement.bean.NextNode;
 import com.wisesignsoft.OperationManagement.bean.Section;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.mview.BMFormDataLinkage;
@@ -30,7 +31,7 @@ public class PullPaseXmlUtil {
         BMFormDataLinkage bmFormDataLinkage = null;
         ButtonModel button = null;
         RealmList<WorkOrder> list = null;
-        List<ButtonModel.NextNode> list2 = null;
+        RealmList<NextNode> list2 = null;
         List datas = new ArrayList<>();
         try {
             XmlPullParser parser = Xml.newPullParser();
@@ -54,14 +55,14 @@ public class PullPaseXmlUtil {
                             isStart = true;
                         }
                         if (isStart2) {
-                            ButtonModel.NextNode nextNode = passNextNode(parser);
+                            NextNode nextNode = passNextNode(parser);
                             if (list2 != null) {
                                 list2.add(nextNode);
                             }
                         }
                         if ("Button".equals(name)) {
                             button = passButton(parser);
-                            list2 = new ArrayList<>();
+                            list2 = new RealmList<>();
                             isStart2 = true;
                         }
                         if ("BMForm".equals(name)) {
@@ -316,8 +317,8 @@ public class PullPaseXmlUtil {
         return button;
     }
 
-    private static ButtonModel.NextNode passNextNode(XmlPullParser parser) {
-        ButtonModel.NextNode nextNode = new ButtonModel.NextNode();
+    private static NextNode passNextNode(XmlPullParser parser) {
+        NextNode nextNode = new NextNode();
         String viewName = parser.getName();
         int count = parser.getAttributeCount();
         nextNode.setViewName(viewName);

@@ -18,9 +18,13 @@ import com.google.gson.Gson;
 import com.wisesignsoft.OperationManagement.BaseActivity;
 import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
+import com.wisesignsoft.OperationManagement.bean.BMForm;
+import com.wisesignsoft.OperationManagement.bean.ButtonModel;
+import com.wisesignsoft.OperationManagement.bean.NextNode;
 import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
+import com.wisesignsoft.OperationManagement.mview.ButtonView;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
 import com.wisesignsoft.OperationManagement.mview.MyDialog;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
@@ -28,6 +32,7 @@ import com.wisesignsoft.OperationManagement.mview.WorkOrderDetailView;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
+import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
 import com.wisesignsoft.OperationManagement.utils.PullPaseXmlUtil;
 
@@ -50,14 +55,14 @@ import rx.schedulers.Schedulers;
 
 public class OrderSolvedActivity extends BaseActivity {
 
-    private MyTitle mt_order_solved;
-    private WorkOrderDetailView wodv_solved;
-    private LoadingView loadingView;
-    private String pikey, current;
+    private BMForm bmForm;
     private String taskId;
     private String taskNodeType;
+    private String pikey, current;
+    private MyTitle mt_order_solved;
+    private LoadingView loadingView;
     private LinearLayout ll_new_temp;
-    //    private BMForm bmForm;
+    private WorkOrderDetailView wodv_solved;
     public static String extraKeyCurrent = "CURRENT", extraKeyPikey = "PIKEY";
 
     public static void startSelf(Context context, String current, String picky) {
@@ -119,6 +124,7 @@ public class OrderSolvedActivity extends BaseActivity {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         loadingView.stop(loadingView);
+                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
                     }
 
                     @Override
@@ -133,7 +139,7 @@ public class OrderSolvedActivity extends BaseActivity {
                         WorkOrderDataManager.newInstance().setMapInit(map);
                         List datas = PullPaseXmlUtil.pase(taskDetailBean.getFormDocument());
                         wodv_solved.refreshRealmData(datas);
-//                        crossfade();
+                        setButton(datas);
                         loadingView.stop(loadingView);
                     }
                 });
@@ -161,11 +167,33 @@ public class OrderSolvedActivity extends BaseActivity {
     public void commit() {
         final LoadingView loadingView = LoadingView.getLoadingView(this);
         loadingView.show();
+        //
+        if (!WorkOrderDataManager.newInstance().checkEmptyValue(this)) {
+            loadingView.stop(loadingView);
+            return;
+        } else {
+            WorkOrderDataManager.newInstance().fillFormValue();
+        }
+
 
     }
 
+    //生成提交按钮
     private void setButton(List datas) {
-
+        if (ll_new_temp.getChildCount() > 1) ll_new_temp.removeViewAt(1);
+        for (Object o : datas) {
+            if (o instanceof ButtonModel) {
+                List<NextNode> list = ((ButtonModel) o).getNextNode();
+                if (list == null || list.size() == 0) {
+                    continue;
+                }
+                ButtonView buttonView = new ButtonView(this);
+                buttonView.setData((ButtonModel) o, bmForm.getConditionJudgment());
+                ll_new_temp.addView(buttonView);
+            } else if (o instanceof BMForm) {
+                bmForm = ((BMForm) o);
+            }
+        }
     }
 
     private void save() {

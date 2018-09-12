@@ -51,7 +51,7 @@ public class CheckBoxView extends LinearLayout implements CheckBoxViewAdapter.IC
 
         RecyclerView.LayoutManager manager = new GridLayoutManager(context, 3);
         rv_check_box.setLayoutManager(manager);
-        adapter = new CheckBoxViewAdapter(getContext(), datas);
+        adapter = new CheckBoxViewAdapter(getContext());
         rv_check_box.setAdapter(adapter);
         adapter.setOnICheckBoxListener(this);
     }
@@ -59,6 +59,7 @@ public class CheckBoxView extends LinearLayout implements CheckBoxViewAdapter.IC
     public void setData(WorkOrder wo) {
         final List<DictDatasBean> lists = new ArrayList<>();
         this.wo = wo;
+        adapter.setClick(wo.isModified());
         wo.addChangeListener(this);
         String str = wo.getName();
         String value = wo.getValue();
@@ -73,14 +74,10 @@ public class CheckBoxView extends LinearLayout implements CheckBoxViewAdapter.IC
             @Override
             public void onResponse(List<DictDatasBean> dictDatasBeans) {
                 lists.addAll(dictDatasBeans);
+                adapter.fillData(lists);
             }
         });
 
-
-        adapter.setClick(wo.isModified());
-        datas.clear();
-        datas.addAll(lists);
-        adapter.notifyDataSetChanged();
         List<String> list = new ArrayList<>();
         if (!TextUtils.isEmpty(value)) {
             String[] ids = value.split(",");
@@ -104,6 +101,7 @@ public class CheckBoxView extends LinearLayout implements CheckBoxViewAdapter.IC
                 WorkOrderDataManager.newInstance().modifyValue(wo.getID(), toStringByIds(list));
             }
         }
+        //选中的值的id集合
         adapter.setIds(list);
         adapter.notifyDataSetChanged();
     }

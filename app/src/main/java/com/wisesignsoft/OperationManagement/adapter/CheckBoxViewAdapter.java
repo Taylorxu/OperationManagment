@@ -24,9 +24,8 @@ public class CheckBoxViewAdapter extends RecyclerView.Adapter {
     private ICheckBoxViewListener listener;
     private boolean isClick = false;
 
-    public CheckBoxViewAdapter(Context context, List<DictDatasBean> list) {
+    public CheckBoxViewAdapter(Context context) {
         this.context = context;
-        this.list = list;
     }
 
     public interface ICheckBoxViewListener {
@@ -59,24 +58,24 @@ public class CheckBoxViewAdapter extends RecyclerView.Adapter {
         if (holder instanceof MyHolder) {
             final DictDatasBean str = list.get(position);
             ((MyHolder) holder).tv.setText(str.getDictName());
-            setImgSelect(((MyHolder) holder).iv, false,((MyHolder) holder).tv);
-            if(ids != null && ids.size()>0){
+            setImgSelect(((MyHolder) holder).iv, false, ((MyHolder) holder).tv);
+            if (ids != null && ids.size() > 0) {
                 for (String id : ids) {
                     if (id.equals(str.getDictId())) {
-                        setImgSelect(((MyHolder) holder).iv, true,((MyHolder) holder).tv);
+                        setImgSelect(((MyHolder) holder).iv, true, ((MyHolder) holder).tv);
                     }
                 }
             }
             ((MyHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(isClick){
+                    if (isClick) {
                         if (((MyHolder) holder).tv.isSelected()) {
                             ids.remove(str.getDictId());
-                            setImgSelect(((MyHolder) holder).iv, false,((MyHolder) holder).tv);
+                            setImgSelect(((MyHolder) holder).iv, false, ((MyHolder) holder).tv);
                         } else {
                             ids.add(str.getDictId());
-                            setImgSelect(((MyHolder) holder).iv, true,((MyHolder) holder).tv);
+                            setImgSelect(((MyHolder) holder).iv, true, ((MyHolder) holder).tv);
                         }
                         listener.setOnItemClickListenenr();
                     }
@@ -107,7 +106,14 @@ public class CheckBoxViewAdapter extends RecyclerView.Adapter {
     public List<String> getIds() {
         return ids;
     }
-    public void setClick(boolean isClick){
+
+    public void setClick(boolean isClick) {
         this.isClick = isClick;
+    }
+
+    //初始化数据
+    public void fillData(List<DictDatasBean> data) {
+        this.list = data;
+        notifyDataSetChanged();
     }
 }

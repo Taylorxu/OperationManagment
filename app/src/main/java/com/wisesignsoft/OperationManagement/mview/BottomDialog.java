@@ -27,8 +27,8 @@ public class BottomDialog extends Dialog implements View.OnClickListener {
     private OnTitleClickListener listener;
     private WheelView wv_address;
     private List<DictDatasBean> datas;
-    private String province;
-    private String name;
+    private String dictId, dictName;
+
 
     public BottomDialog(Context context, int themeResId) {
         super(context, themeResId);
@@ -72,7 +72,7 @@ public class BottomDialog extends Dialog implements View.OnClickListener {
                 break;
             case R.id.title_right:
                 showSelectedResult();
-                listener.onTitleRightClickListener(province,name);
+                listener.onTitleRightClickListener(dictId, dictName);
                 dismiss();
                 break;
         }
@@ -103,8 +103,8 @@ public class BottomDialog extends Dialog implements View.OnClickListener {
 
     private void showSelectedResult() {
         try {
-            province = datas.get(wv_address.getCurrentItem()).getDictId();
-            name = datas.get(wv_address.getCurrentItem()).getDictName();
+            dictId = datas.get(wv_address.getCurrentItem()).getDictId();
+            dictName = datas.get(wv_address.getCurrentItem()).getDictName();
         } catch (Exception e) {
             e.printStackTrace();
         }

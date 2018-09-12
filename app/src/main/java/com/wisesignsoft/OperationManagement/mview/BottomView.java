@@ -56,7 +56,7 @@ public class BottomView extends RelativeLayout implements RealmObjectChangeListe
                         }
                     }
                 });
-            } else {//value 是字典的值，遇到 ‘项目选择’的情况，WorkOrder的value是被修改成 字典值
+            } else {//value 是字典的值
                 baseView.setTv_right(value);
             }
         } else {
@@ -92,8 +92,8 @@ public class BottomView extends RelativeLayout implements RealmObjectChangeListe
                     dialog.setUpData(dictDatasBeans);
                     dialog.setOnTitleClickListener(new BottomDialog.OnTitleClickListener() {
                         @Override
-                        public void onTitleRightClickListener(String province, String name) {
-                            WorkOrderDataManager.newInstance().modifyValue(wo.getID(), province);
+                        public void onTitleRightClickListener(String dictId, String dictName) {
+                            WorkOrderDataManager.newInstance().modifyValue(wo.getID(), dictId);
                         }
                     });
                     if (!dialog.isShowing()) {

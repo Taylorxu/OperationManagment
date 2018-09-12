@@ -24,7 +24,7 @@ public class StractgyBean {
         this.strategyKey = strategyKey;
     }
 
-    public static class Value {
+    public static class StrategyValueBean {
         private String roleId;
         private String roleName;
 
