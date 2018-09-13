@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.wisesignsoft.OperationManagement.R;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by ycs on 2016/12/1.
  */
@@ -61,5 +64,13 @@ public class SectionView extends RelativeLayout implements View.OnClickListener 
                 ll_section_view.setVisibility(GONE);
             }
         }
+    }
+
+    /**
+     * 同一处理人，更新section父view内容。需要这些返回值
+     * @return
+     */
+    public List getLabelandVisible() {
+        return Arrays.asList(tv_section_view.getText().toString(), ll_section_view.getVisibility());
     }
 }

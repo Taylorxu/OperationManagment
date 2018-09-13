@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -46,9 +47,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class WorkOrderDetailView extends LinearLayout {
-    //最外层的布局
-    public static LinearLayout ll_work_order_detail;
     private Context context;
+    public static LinearLayout ll_work_order_detail;    //最外层的布局
 
     public WorkOrderDetailView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -62,6 +62,25 @@ public class WorkOrderDetailView extends LinearLayout {
     }
 
     /**
+     * 提交到下一环节时，下一环节的处理人还是上一环节处理人；则更新上一环节为已处理过环节，下一环节为当前环节
+     */
+    public void addOrReplaceChildView(String label, boolean isCurrent, SectionView newSectionView, int size) {
+        if (ll_work_order_detail.getChildCount()==size) {
+            for (int i = 0; i < ll_work_order_detail.getChildCount(); i++) {
+                SectionView oldSectionView = (SectionView) ll_work_order_detail.getChildAt(i);
+                List list = oldSectionView.getLabelandVisible();
+                boolean oldOneisCurrent = (int) list.get(1) == View.VISIBLE ? true : false;
+                if (label.equals(list.get(0)) && isCurrent != oldOneisCurrent) {//环节名称相等,但是是当前环节条件不一致。以最新的数据为准
+                    ll_work_order_detail.removeViewAt(i);
+                    ll_work_order_detail.addView(newSectionView, i);
+                }
+            }
+        } else {
+            ll_work_order_detail.addView(newSectionView);
+        }
+    }
+
+    /**
      * 根据更新后的ream数据去填充布局
      */
     public void fillComponents() {
@@ -71,7 +90,7 @@ public class WorkOrderDetailView extends LinearLayout {
         for (Section section : sectionRealmList) {
             SectionView sectionView = new SectionView(context);
             sectionView.setData(section.getLabel(), section.isCurrent());
-            ll_work_order_detail.addView(sectionView);
+            addOrReplaceChildView(section.getLabel(), section.isCurrent(), sectionView,sectionRealmList.size());
             RealmList<WorkOrder> workOrders = section.getSection();
             for (WorkOrder wo : workOrders) {
                 if (!wo.isVisible() && !wo.getViewName().equals("Position")) {

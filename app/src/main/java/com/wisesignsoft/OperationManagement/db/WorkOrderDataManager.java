@@ -474,9 +474,6 @@ public class WorkOrderDataManager {
             @Override
             public void onResponse(RealmResults<WorkOrder> workOrders) {
                 for (WorkOrder wo : workOrders) {
-                    if (wo.getName().equals("优先级")) {
-                        LogUtil.log(wo.isRequired() + "-------------" + TextUtils.isEmpty(wo.getValue()));
-                    }
                     if (wo.isRequired() && TextUtils.isEmpty(wo.getValue())) {
                         Toast.makeText(context, "请填写" + wo.getName(), Toast.LENGTH_SHORT).show();
                         ok[0] = false;
