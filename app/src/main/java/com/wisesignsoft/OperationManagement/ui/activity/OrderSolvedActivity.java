@@ -23,18 +23,23 @@ import com.wisesignsoft.OperationManagement.bean.ButtonModel;
 import com.wisesignsoft.OperationManagement.bean.NextNode;
 import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.User;
+import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.mview.ButtonView;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
 import com.wisesignsoft.OperationManagement.mview.MyDialog;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
 import com.wisesignsoft.OperationManagement.mview.WorkOrderDetailView;
+import com.wisesignsoft.OperationManagement.net.response.BaseResponse;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
+import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
 import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
+import com.wisesignsoft.OperationManagement.utils.GsonHelper;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
 import com.wisesignsoft.OperationManagement.utils.PullPaseXmlUtil;
+import com.wisesignsoft.OperationManagement.utils.ToastUtil;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -44,6 +49,7 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,7 +66,6 @@ public class OrderSolvedActivity extends BaseActivity {
     private String taskNodeType;
     private String pikey, current;
     private MyTitle mt_order_solved;
-    private LoadingView loadingView;
     private LinearLayout ll_new_temp;
     private WorkOrderDetailView wodv_solved;
     public static String extraKeyCurrent = "CURRENT", extraKeyPikey = "PIKEY";
@@ -82,8 +87,6 @@ public class OrderSolvedActivity extends BaseActivity {
 
 
     private void init() {
-        loadingView = LoadingView.getLoadingView(this);
-        loadingView.show();
         mt_order_solved = (MyTitle) findViewById(R.id.mt_order_solved);
         wodv_solved = (WorkOrderDetailView) findViewById(R.id.wodv_solved);
         ll_new_temp = (LinearLayout) findViewById(R.id.ll_new_template);
@@ -104,6 +107,8 @@ public class OrderSolvedActivity extends BaseActivity {
     }
 
     private void requestDetail() {
+        final LoadingView loadingView = LoadingView.getLoadingView(this);
+        loadingView.show();
         current = getIntent().getStringExtra(extraKeyCurrent);
         pikey = getIntent().getStringExtra(extraKeyPikey);
         List<String> list = new ArrayList<>();
@@ -129,14 +134,7 @@ public class OrderSolvedActivity extends BaseActivity {
 
                     @Override
                     public void onNext(TaskDetailBean taskDetailBean) {
-                        pikey = taskDetailBean.getPIKEY();
-                        taskId = taskDetailBean.getCURRENT_TASKID();
-                        taskNodeType = taskDetailBean.getTaskNodeType();
-                        Map<String, String> map = new HashMap<>();
-                        map.put("taskNodeType", taskNodeType);
-                        map.put("PIKEY", pikey);
-                        map.put("taskId", taskId);
-                        WorkOrderDataManager.newInstance().setMapInit(map);
+                        setMapInit(taskDetailBean);
                         List datas = PullPaseXmlUtil.pase(taskDetailBean.getFormDocument());
                         wodv_solved.refreshRealmData(datas);
                         setButton(datas);
@@ -145,36 +143,80 @@ public class OrderSolvedActivity extends BaseActivity {
                 });
     }
 
-    public void crossfade() {
-        wodv_solved.ll_work_order_detail.setAlpha(0f);
-        wodv_solved.ll_work_order_detail.setVisibility(View.VISIBLE);
-        wodv_solved.ll_work_order_detail.animate().alpha(1f)
-                .setDuration(1000)
-                .setListener(null);
-
-        loadingView.rootView.animate()
-                .alpha(0f)
-                .setDuration(1000)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        loadingView.stop(loadingView);
-                    }
-                });
-
-    }
 
     public void commit() {
         final LoadingView loadingView = LoadingView.getLoadingView(this);
         loadingView.show();
-        //
         if (!WorkOrderDataManager.newInstance().checkEmptyValue(this)) {
             loadingView.stop(loadingView);
             return;
         } else {
             WorkOrderDataManager.newInstance().fillFormValue();
         }
+        String result = GsonHelper.build().objectToJsonString(WorkOrderDataManager.parameterMap);
+        List<String> list = new ArrayList<>(Arrays.asList(result, User.getUserFromRealm().getUsername()));
+        ApiService.Creator.get().submitTask(RequestBody.getgEnvelope(Protocol.process_name_space, list, Protocol.submitTask))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io() )
+                .flatMap(new FlatMapResponse<TaskDetailBean>())
+                .subscribe(new Subscriber<TaskDetailBean>() {
+                    @Override
+                    public void onCompleted() {
 
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
+                        loadingView.stop(loadingView);
+                    }
+
+                    @Override
+                    public void onNext(TaskDetailBean response) {
+                        loadingView.stop(loadingView);
+                        if (response.getState().equals("0")) {
+                            if (response.isSame) {
+                                Toast.makeText(OrderSolvedActivity.this, "提交成功,为你打开下一环节", Toast.LENGTH_SHORT).show();
+                                refreshDataToView(response);
+                            } else {
+                                Toast.makeText(OrderSolvedActivity.this, "提交成功", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        } else {
+                            ToastUtil.toast(getBaseContext(), response.getState());
+                        }
+
+                    }
+                });
+
+    }
+
+    /**
+     * 如果下一环节是同一个处理人，直接刷新数据；否则关闭当前activity
+     *
+     * @param response
+     */
+    public void refreshDataToView(TaskDetailBean response) {
+        String data = response.getData();
+        Gson gson = new Gson();
+        TaskDetailBean detailResponse = gson.fromJson(data, TaskDetailBean.class);
+        setMapInit(detailResponse);
+        List datas = PullPaseXmlUtil.pase(detailResponse.getFormDocument());
+        wodv_solved.refreshRealmData(datas);
+        setButton(datas);
+    }
+
+    public void setMapInit(TaskDetailBean response) {
+        pikey = response.getPIKEY();
+        taskId = response.getCURRENT_TASKID();
+        taskNodeType = response.getTaskNodeType();
+        Map<String, String> map = new HashMap<>();
+        map.put("PIKEY", pikey);
+        map.put("taskId", taskId);
+        map.put("osType", "android");
+        map.put("taskNodeType", taskNodeType);
+        WorkOrderDataManager.newInstance().setMapInit(map);
 
     }
 
@@ -218,11 +260,29 @@ public class OrderSolvedActivity extends BaseActivity {
     private void requestSure() {
         final LoadingView loadingView = LoadingView.getLoadingView(this);
         loadingView.show();
-
     }
 
     private void requestCancel() {
         finish();
+    }
+
+    public void crossfade() {
+        wodv_solved.ll_work_order_detail.setAlpha(0f);
+        wodv_solved.ll_work_order_detail.setVisibility(View.VISIBLE);
+        wodv_solved.ll_work_order_detail.animate().alpha(1f)
+                .setDuration(1000)
+                .setListener(null);
+
+        /*loadingView.rootView.animate()
+                .alpha(0f)
+                .setDuration(1000)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        loadingView.stop(loadingView);
+                    }
+                });*/
+
     }
 
     @Override

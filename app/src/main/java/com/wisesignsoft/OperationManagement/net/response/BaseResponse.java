@@ -5,9 +5,10 @@ package com.wisesignsoft.OperationManagement.net.response;
  */
 
 public class BaseResponse {
+    public String i;
+    public boolean isSame; //下一环节是否是同一个审批人
     public String returnMsg;
     public String returnState;
-    public String i;
 
     public String getI() {
         return i;
@@ -15,6 +16,14 @@ public class BaseResponse {
 
     public void setI(String i) {
         this.i = i;
+    }
+
+    public boolean isSame() {
+        return isSame;
+    }
+
+    public void setSame(boolean same) {
+        isSame = same;
     }
 
     public String getReturnMsg() {
@@ -32,6 +41,7 @@ public class BaseResponse {
     public void setReturnState(String returnState) {
         this.returnState = returnState;
     }
+
     public Error getError() {
         return new Error(Integer.decode(getReturnState()), returnMsg);
     }

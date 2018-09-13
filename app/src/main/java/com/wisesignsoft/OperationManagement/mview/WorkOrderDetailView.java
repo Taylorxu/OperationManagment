@@ -95,10 +95,12 @@ public class WorkOrderDetailView extends LinearLayout {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<Section> sectionRealmList = realm.where(Section.class).findAll();
-                RealmResults<BMForm> bmForms = realm.where(BMForm.class).findAll();
-                sectionRealmList.deleteAllFromRealm();
-                bmForms.deleteAllFromRealm();
+                RealmResults<Section> sectionResult = realm.where(Section.class).findAll();
+                RealmResults<WorkOrder> workOrderResult = realm.where(WorkOrder.class).findAll();
+                RealmResults<BMForm> bmFormsResult = realm.where(BMForm.class).findAll();
+                sectionResult.deleteAllFromRealm();
+                workOrderResult.deleteAllFromRealm();
+                bmFormsResult.deleteAllFromRealm();
             }
         });
         for (final Object o : datas) {

@@ -15,6 +15,7 @@ import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
 import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
+import com.wisesignsoft.OperationManagement.net.response.BaseResponse;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.convert.AnnotationStrategy;
@@ -97,6 +98,11 @@ public interface ApiService {
      */
     @POST(Protocol.process_host)
     Observable<Response<TaskDetailBean>> openTaskDetail(@Body String requestStr);
+
+    //提交表单数据
+    @POST(Protocol.process_host)
+    Observable<Response<TaskDetailBean>> submitTask(@Body String requestStr);
+
 
     /**
      * 查询单个字典有效数据
