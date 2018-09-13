@@ -521,4 +521,21 @@ public class WorkOrderDataManager {
         LogUtil.log(parameterMap.toString());
     }
 
+
+    /**
+     * 获取整个工单的数据集,保存草稿
+     *
+     * @return
+     */
+    public Map<String, String> getReturnStringModelForDraft() {
+        queryAllWorkOrder(new CallBack<RealmResults<WorkOrder>>() {
+            @Override
+            public void onResponse(RealmResults<WorkOrder> workOrders) {
+                for (WorkOrder wo : workOrders) {
+                    parameterMap.put(wo.getDmAttrName(), wo.getValue());
+                }
+            }
+        });
+        return parameterMap;
+    }
 }

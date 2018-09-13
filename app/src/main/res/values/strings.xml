@@ -34,6 +34,7 @@
     <string name="finished">已完成</string>
     <string name="select_person">选择人员</string>
     <string name="loading">正在加载中...</string>
+    <string name="load_field">数据加载失败</string>
     <string name="cancel">取消</string>
     <string name="empty_text">没有相关结果</string>
     <string name="event_classification">事件分类</string>
@@ -47,6 +48,8 @@
     <string name="capture_image">抓取图片</string>
     <string name="add_tai_zhang">新增全组件台账</string>
     <string name="click_delete">点击可删除</string>
+    <string name="save_draft_succeed">保存草稿成功</string>
+    <string name="save_draft_failed">保存草稿失败</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -13,6 +13,7 @@ import com.wisesignsoft.OperationManagement.bean.RoleBean;
 import com.wisesignsoft.OperationManagement.bean.SingleResModelListData;
 import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
+import com.wisesignsoft.OperationManagement.bean.TaskOrderTrackBean;
 import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
 import com.wisesignsoft.OperationManagement.net.response.BaseResponse;
@@ -168,6 +169,13 @@ public interface ApiService {
     @POST(Protocol.dept_host)
     Observable<Response<BaseDataResponse<List<RoleBean>>>> findRoleByGroupId(@Body String requestStr);
 
+    //每个单子的流程记录
+    @POST(Protocol.process_host)
+    Observable<Response<TaskOrderTrackBean>> findWonhInfo(@Body String requestStr);
+
+    //保存草稿
+    @POST(Protocol.process_host)
+    Observable<Response<Integer>> saveProcessSketch(@Body String requestStr);
 
     class Creator {
         private static Strategy strategy = new AnnotationStrategy();

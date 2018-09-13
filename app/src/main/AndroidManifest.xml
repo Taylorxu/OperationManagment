@@ -57,6 +57,9 @@
             android:name=".ui.activity.EventClassificationActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.activity.SingleResModelSelectorActivity"></activity>
+        <activity
+            android:name=".ui.activity.TaskOrderTrackActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

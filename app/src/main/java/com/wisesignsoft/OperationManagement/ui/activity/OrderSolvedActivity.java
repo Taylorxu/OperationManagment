@@ -11,6 +11,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import com.wisesignsoft.OperationManagement.mview.MyDialog;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
 import com.wisesignsoft.OperationManagement.mview.WorkOrderDetailView;
 import com.wisesignsoft.OperationManagement.net.response.BaseResponse;
+import com.wisesignsoft.OperationManagement.net.response.CustomSubscriber;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
@@ -64,11 +67,13 @@ public class OrderSolvedActivity extends BaseActivity {
     private BMForm bmForm;
     private String taskId;
     private String taskNodeType;
+    private ImageView loadingImg;
     private String pikey, current;
     private MyTitle mt_order_solved;
-    private LinearLayout ll_new_temp;
     private WorkOrderDetailView wodv_solved;
+    private LinearLayout ll_new_temp, ll_content_view;
     public static String extraKeyCurrent = "CURRENT", extraKeyPikey = "PIKEY";
+
 
     public static void startSelf(Context context, String current, String picky) {
         Intent intent = new Intent(context, OrderSolvedActivity.class);
@@ -82,15 +87,32 @@ public class OrderSolvedActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_solved);
         init();
-        requestDetail();
+        getIntentParams(getIntent());
     }
 
+    /**
+     * 从新建界面过来，如果下一环节的处理人时同一个
+     *
+     * @param intent
+     */
+    public void getIntentParams(Intent intent) {
+        if (intent.getParcelableExtra("Data") != null) {
+            refreshDataToView((TaskDetailBean) intent.getParcelableExtra("Data"));
+            crossfade();
+        } else {
+            requestDetail();
+        }
+    }
 
     private void init() {
         mt_order_solved = (MyTitle) findViewById(R.id.mt_order_solved);
         wodv_solved = (WorkOrderDetailView) findViewById(R.id.wodv_solved);
         ll_new_temp = (LinearLayout) findViewById(R.id.ll_new_template);
-
+        ll_content_view = (LinearLayout) findViewById(R.id.ll_content_view);
+        loadingImg = findViewById(R.id.iv_loading);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim_loading);
+        loadingImg.setAnimation(animation);
+        loadingImg.startAnimation(animation);
         mt_order_solved.setBackListener(true, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,14 +123,14 @@ public class OrderSolvedActivity extends BaseActivity {
         mt_order_solved.setTvRight(true, "操作记录", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                WonhInfoActivity.startSelf(OrderSolvedActivity.this, pikey);
+                TaskOrderTrackActivity.startSelf(OrderSolvedActivity.this, pikey);
             }
         });
     }
 
+
     private void requestDetail() {
-        final LoadingView loadingView = LoadingView.getLoadingView(this);
-        loadingView.show();
+
         current = getIntent().getStringExtra(extraKeyCurrent);
         pikey = getIntent().getStringExtra(extraKeyPikey);
         List<String> list = new ArrayList<>();
@@ -119,17 +141,13 @@ public class OrderSolvedActivity extends BaseActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(new FlatMapResponse<TaskDetailBean>())
-                .subscribe(new Subscriber<TaskDetailBean>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
+                .subscribe(new CustomSubscriber<TaskDetailBean>() {
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
-                        loadingView.stop(loadingView);
-                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
+                        super.onError(e);
+                        crossfade();
+                        ToastUtil.toast(getBaseContext(), getString(R.string.load_field));
                     }
 
                     @Override
@@ -138,7 +156,7 @@ public class OrderSolvedActivity extends BaseActivity {
                         List datas = PullPaseXmlUtil.pase(taskDetailBean.getFormDocument());
                         wodv_solved.refreshRealmData(datas);
                         setButton(datas);
-                        loadingView.stop(loadingView);
+                        crossfade();
                     }
                 });
     }
@@ -157,7 +175,7 @@ public class OrderSolvedActivity extends BaseActivity {
         List<String> list = new ArrayList<>(Arrays.asList(result, User.getUserFromRealm().getUsername()));
         ApiService.Creator.get().submitTask(RequestBody.getgEnvelope(Protocol.process_name_space, list, Protocol.submitTask))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io() )
+                .subscribeOn(Schedulers.io())
                 .flatMap(new FlatMapResponse<TaskDetailBean>())
                 .subscribe(new Subscriber<TaskDetailBean>() {
                     @Override
@@ -260,6 +278,33 @@ public class OrderSolvedActivity extends BaseActivity {
     private void requestSure() {
         final LoadingView loadingView = LoadingView.getLoadingView(this);
         loadingView.show();
+        String result = GsonHelper.build().objectToJsonString(WorkOrderDataManager.newInstance().getReturnStringModelForDraft());
+        List<String> list = new ArrayList<>(Arrays.asList(result, User.getUserFromRealm().getUsername()));
+        ApiService.Creator.get().saveProcessSketch(RequestBody.getgEnvelope(Protocol.process_name_space, list, Protocol.saveProcessSketch))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .flatMap(new FlatMapResponse<Integer>())
+                .subscribe(new CustomSubscriber<Integer>() {
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        loadingView.stop(loadingView);
+                    }
+
+                    @Override
+                    public void onNext(Integer state) {
+                        super.onNext(state);
+                        if (state == 0) {
+                            Toast.makeText(OrderSolvedActivity.this, getString(R.string.save_draft_succeed), Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(OrderSolvedActivity.this, getString(R.string.save_draft_failed), Toast.LENGTH_SHORT).show();
+                        }
+                        loadingView.stop(loadingView);
+
+                    }
+                });
     }
 
     private void requestCancel() {
@@ -267,21 +312,21 @@ public class OrderSolvedActivity extends BaseActivity {
     }
 
     public void crossfade() {
-        wodv_solved.ll_work_order_detail.setAlpha(0f);
-        wodv_solved.ll_work_order_detail.setVisibility(View.VISIBLE);
-        wodv_solved.ll_work_order_detail.animate().alpha(1f)
-                .setDuration(1000)
-                .setListener(null);
-
-        /*loadingView.rootView.animate()
+        loadingImg.animate()
                 .alpha(0f)
-                .setDuration(1000)
+                .setDuration(100)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        loadingView.stop(loadingView);
+                        loadingImg.setVisibility(View.GONE);
+                        loadingImg.getAnimation().cancel();
                     }
-                });*/
+                });
+        ll_content_view.setAlpha(0f);
+        ll_content_view.setVisibility(View.VISIBLE);
+        ll_content_view.animate().alpha(1f)
+                .setDuration(666)
+                .setListener(null);
 
     }
 
