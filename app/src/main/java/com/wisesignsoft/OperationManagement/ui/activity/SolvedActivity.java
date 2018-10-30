@@ -76,6 +76,7 @@ public class SolvedActivity extends BaseActivity implements View.OnClickListener
         sovledAdapter.setOnItemSolvedListener(new SovledAdapter.ISolvedItemClickListener() {
             @Override
             public void setOnItemSolvedClickListener(String key) {
+                WorkOrderDetailActivity.startSelf(getBaseContext(), key);
             }
         });
         /*设置适配器*/

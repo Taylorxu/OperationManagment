@@ -5,46 +5,23 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
+import com.wisesignsoft.OperationManagement.utils.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.wisesignsoft.OperationManagement.BaseActivity;
-import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.BMForm;
-import com.wisesignsoft.OperationManagement.bean.DictDatas;
-import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.LinkConditionData;
 import com.wisesignsoft.OperationManagement.bean.Section;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
-import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
-import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
-import com.wisesignsoft.OperationManagement.net.response.DataTypeSelector;
-import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
-import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
-import com.wisesignsoft.OperationManagement.net.service.ApiService;
-import com.wisesignsoft.OperationManagement.net.service.RequestBody;
-import com.wisesignsoft.OperationManagement.ui.activity.OrderSolvedActivity;
-import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
-import io.realm.ObjectChangeSet;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmList;
-import io.realm.RealmModel;
-import io.realm.RealmObjectChangeListener;
 import io.realm.RealmResults;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class WorkOrderDetailView extends LinearLayout {
     private Context context;
@@ -65,7 +42,7 @@ public class WorkOrderDetailView extends LinearLayout {
      * 提交到下一环节时，下一环节的处理人还是上一环节处理人；则更新上一环节为已处理过环节，下一环节为当前环节
      */
     public void addOrReplaceChildView(String label, boolean isCurrent, SectionView newSectionView, int size) {
-        if (ll_work_order_detail.getChildCount()==size) {
+        if (ll_work_order_detail.getChildCount() == size) {
             for (int i = 0; i < ll_work_order_detail.getChildCount(); i++) {
                 SectionView oldSectionView = (SectionView) ll_work_order_detail.getChildAt(i);
                 List list = oldSectionView.getLabelandVisible();
@@ -90,7 +67,7 @@ public class WorkOrderDetailView extends LinearLayout {
         for (Section section : sectionRealmList) {
             SectionView sectionView = new SectionView(context);
             sectionView.setData(section.getLabel(), section.isCurrent());
-            addOrReplaceChildView(section.getLabel(), section.isCurrent(), sectionView,sectionRealmList.size());
+            addOrReplaceChildView(section.getLabel(), section.isCurrent(), sectionView, sectionRealmList.size());
             RealmList<WorkOrder> workOrders = section.getSection();
             for (WorkOrder wo : workOrders) {
                 if (!wo.isVisible() && !wo.getViewName().equals("Position")) {
@@ -110,6 +87,7 @@ public class WorkOrderDetailView extends LinearLayout {
      */
     public void refreshRealmData(final List datas) {
         final Realm realm = Realm.getDefaultInstance();
+        if (realm.isInTransaction()) realm.cancelTransaction();
         //先删除存在section在更新。 曾考虑过创建一个关联的对象，以pikey 为索引。但考虑到数据的更新频率过快，所以删除旧的section 只保留当前查看的数据。也减少了后期的数据管理
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -117,9 +95,11 @@ public class WorkOrderDetailView extends LinearLayout {
                 RealmResults<Section> sectionResult = realm.where(Section.class).findAll();
                 RealmResults<WorkOrder> workOrderResult = realm.where(WorkOrder.class).findAll();
                 RealmResults<BMForm> bmFormsResult = realm.where(BMForm.class).findAll();
+                RealmResults<LinkConditionData> conditionDataResults = realm.where(LinkConditionData.class).findAll();
                 sectionResult.deleteAllFromRealm();
                 workOrderResult.deleteAllFromRealm();
                 bmFormsResult.deleteAllFromRealm();
+                conditionDataResults.deleteAllFromRealm();
             }
         });
         for (final Object o : datas) {
@@ -133,10 +113,12 @@ public class WorkOrderDetailView extends LinearLayout {
                 });
             } else if (o instanceof BMFormDataLinkage) {//控件的值之间存在互相影响的根据数据集
                 String str = ((BMFormDataLinkage) o).getDataLinkageJson();
-                Gson gson = new Gson();
-                List<Map<String, Object>> links = gson.fromJson(str, new TypeToken<List<Map<String, Object>>>() {
-                }.getType());
-                refreshLinkConditionData(realm, links);
+                if (!TextUtils.isEmpty(str)) {
+                    Gson gson = new Gson();
+                    List<Map<String, Object>> links = gson.fromJson(str, new TypeToken<List<Map<String, Object>>>() {
+                    }.getType());
+                    refreshLinkConditionData(realm, links);
+                }
             } else if (o instanceof Section) {// 控件 数据集
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
@@ -156,6 +138,7 @@ public class WorkOrderDetailView extends LinearLayout {
             }
         }
         realm.close();
+
         fillComponents();
     }
 

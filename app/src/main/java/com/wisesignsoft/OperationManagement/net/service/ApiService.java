@@ -89,7 +89,9 @@ public interface ApiService {
      * @return
      */
     @POST(Protocol.yxyw_host)
-    Observable<Response<BaseDataResponse<List<TaskItemBean>>>> findUnhandleProcess(@Body String requestStr);/**
+    Observable<Response<BaseDataResponse<List<TaskItemBean>>>> findUnhandleProcess(@Body String requestStr);
+
+    /**
      * 获取待处理
      *
      * @param requestStr
@@ -183,6 +185,9 @@ public interface ApiService {
     //保存草稿
     @POST(Protocol.process_host)
     Observable<Response<Integer>> saveProcessSketch(@Body String requestStr);
+
+    @POST(Protocol.process_host)
+    Observable<Response<String>> findWorkOrderDetailByPiKey(@Body String requestStr);
 
     class Creator {
         private static Strategy strategy = new AnnotationStrategy();

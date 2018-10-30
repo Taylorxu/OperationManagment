@@ -51,7 +51,6 @@ public class ConfigureChangeView extends RelativeLayout implements View.OnClickL
         wo.addChangeListener(this);
         String title = wo.getName();
         String value = wo.getValue();
-        Log.i("YCS", "setData: 配置项选择：" + title + "===value:" + value);
         if (!TextUtils.isEmpty(title)) {
             if (wo.isRequired()) {
                 tv_configure_left.setText(title + " *");

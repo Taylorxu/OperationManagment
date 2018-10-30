@@ -52,10 +52,11 @@ public class User extends RealmObject {
 
     public static User getUserFromRealm() {
         Realm realm = Realm.getDefaultInstance();
+        if (realm.isInTransaction()) realm.cancelTransaction();
         realm.beginTransaction();
         User results = realm.where(User.class).findFirst();
         realm.commitTransaction();
-        return results;
+        return realm.copyFromRealm(results);
     }
 
     public static void updateUser(User userp) {
