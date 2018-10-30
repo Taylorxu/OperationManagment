@@ -22,7 +22,6 @@ import io.realm.RealmObjectChangeListener;
 
 /**
  * 单行输入组件
- * TODO 列表控件 是一个有多个类似textView的布局。指定的model 是 ColumnsJsonBean 。所以需要 单独写一个textView
  */
 public class SingleTextView extends LinearLayout implements RealmObjectChangeListener<WorkOrder> {
 

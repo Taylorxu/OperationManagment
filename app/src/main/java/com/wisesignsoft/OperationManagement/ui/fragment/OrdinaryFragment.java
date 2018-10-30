@@ -31,6 +31,7 @@ import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
 import com.wisesignsoft.OperationManagement.ui.activity.SolvingActivity;
+import com.wisesignsoft.OperationManagement.ui.activity.SolvedActivity;
 import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
 import com.wisesignsoft.OperationManagement.utils.OrdinaryUtil;
 
@@ -305,11 +306,11 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
                 intent.setClass(getActivity(), SolvingActivity.class);
                 startActivity(intent);
                 break;
-           /* case R.id.rl_ordinary_solved:
+            case R.id.rl_ordinary_solved:
                 intent = new Intent();
-                intent.setClass(getActivity(), SovledActivity.class);
+                intent.setClass(getActivity(), SolvedActivity.class);
                 startActivity(intent);
-                break;*/
+                break;
         }
     }
 

@@ -89,7 +89,14 @@ public interface ApiService {
      * @return
      */
     @POST(Protocol.yxyw_host)
-    Observable<Response<BaseDataResponse<List<TaskItemBean>>>> findUnhandleProcess(@Body String requestStr);
+    Observable<Response<BaseDataResponse<List<TaskItemBean>>>> findUnhandleProcess(@Body String requestStr);/**
+     * 获取待处理
+     *
+     * @param requestStr
+     * @return
+     */
+    @POST(Protocol.yxyw_host)
+    Observable<Response<BaseDataResponse<List<TaskItemBean>>>> findHandledProcess(@Body String requestStr);
 
     /**
      * 工单流程详情请求

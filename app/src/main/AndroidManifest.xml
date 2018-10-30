@@ -50,6 +50,9 @@
             android:name=".ui.activity.SolvingActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.SolvedActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.OrderSolvedActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
