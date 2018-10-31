@@ -9,19 +9,17 @@ import android.widget.TextView;
 
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.CanCreateProcessBean;
+import com.wisesignsoft.OperationManagement.bean.VariousOrderBean;
 
 import java.util.List;
 
-/**
- * Created by ycs on 2016/11/29.
- */
 
 public class NewWorkOrderAdapter extends RecyclerView.Adapter {
     private Context context;
-    private List<CanCreateProcessBean> datas;
+    private List<VariousOrderBean> datas;
     private int currentPosition = -1;
 
-    public NewWorkOrderAdapter(Context context, List<CanCreateProcessBean> datas) {
+    public NewWorkOrderAdapter(Context context, List<VariousOrderBean> datas) {
         this.context = context;
         this.datas = datas;
     }
@@ -44,7 +42,7 @@ public class NewWorkOrderAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof MyHolder) {
-            CanCreateProcessBean bean = datas.get(position);
+            VariousOrderBean bean = datas.get(position);
             ((MyHolder) holder).tv.setText(bean.getName());
             ((MyHolder) holder).tv.setSelected(bean.isSelect());
             holder.itemView.setOnClickListener(new View.OnClickListener() {

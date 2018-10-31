@@ -15,6 +15,7 @@ import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
 import com.wisesignsoft.OperationManagement.bean.TaskOrderTrackBean;
 import com.wisesignsoft.OperationManagement.bean.User;
+import com.wisesignsoft.OperationManagement.bean.VariousOrderBean;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
 import com.wisesignsoft.OperationManagement.net.response.BaseResponse;
 
@@ -188,6 +189,10 @@ public interface ApiService {
 
     @POST(Protocol.process_host)
     Observable<Response<String>> findWorkOrderDetailByPiKey(@Body String requestStr);
+
+    //查询可创建的工单类型
+    @POST(Protocol.process_host)
+    Observable<Response<List<VariousOrderBean>>> findCanCreateProcess(@Body String requestStr);
 
     class Creator {
         private static Strategy strategy = new AnnotationStrategy();

@@ -30,6 +30,7 @@ import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
+import com.wisesignsoft.OperationManagement.ui.activity.SelectOrderPanelActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.SolvingActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.SolvedActivity;
 import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
@@ -185,11 +186,11 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
         Log.i("YCS", "toOtherPager: name：" + resUrl);
         Intent intent;
         switch (resUrl.getResUrl()) {
-           /* case "NEW_TASK":
-                intent = new Intent(getActivity(), NewWorkOrderActivity.class);
+            case "NEW_TASK":
+                intent = new Intent(getActivity(), SelectOrderPanelActivity.class);
                 startActivity(intent);
                 break;
-            case "NEW_TEMPLATE"://新建模板
+          /*  case "NEW_TEMPLATE"://新建模板
                 intent = new Intent(getActivity(), NewTemplateActivity.class);
                 startActivity(intent);
                 break;

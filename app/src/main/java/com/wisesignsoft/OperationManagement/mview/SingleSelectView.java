@@ -107,19 +107,6 @@ public class SingleSelectView extends LinearLayout implements RealmObjectChangeL
 
     }
 
-    public void setDataSelf(String title, List<CanCreateProcessBean> datas) {
-        if (!TextUtils.isEmpty(title)) {
-            tv_single_select.setText(title);
-        }
-        if (datas != null) {
-            adapterSelf = new NewWorkOrderAdapter(getContext(), datas);
-            rv_single_select.setAdapter(adapterSelf);
-        }
-    }
-
-    public int getSelfCurrentPosition() {
-        return adapterSelf.getCurrentPosition();
-    }
 
     @Override
     public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {
