@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_my_template"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.wisesignsoft.OperationManagement.mview.MyTitle
+        android:id="@+id/mt_my_template"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.wisesignsoft.OperationManagement.mview.SearchView
+        android:id="@+id/sv_my_template"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl_my_template"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.wisesignsoft.OperationManagement.mview.RefreshRecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rrv_my_template"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+    <com.wisesignsoft.OperationManagement.mview.EmptyView
+        android:id="@+id/ev_my_template"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

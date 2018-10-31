@@ -14,6 +14,7 @@ import com.wisesignsoft.OperationManagement.bean.SingleResModelListData;
 import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
 import com.wisesignsoft.OperationManagement.bean.TaskOrderTrackBean;
+import com.wisesignsoft.OperationManagement.bean.TempletListBean;
 import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.bean.VariousOrderBean;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
@@ -193,6 +194,14 @@ public interface ApiService {
     //查询可创建的工单类型
     @POST(Protocol.process_host)
     Observable<Response<List<VariousOrderBean>>> findCanCreateProcess(@Body String requestStr);
+
+    //获取我的模板
+    @POST(Protocol.process_host)
+    Observable<Response<TempletListBean>> getTempletsByKeys(@Body String requestStr);
+
+    //打开我的模板详情
+    @POST(Protocol.process_host)
+    Observable<Response<BaseDataResponse<TaskDetailBean>>> openTemplateDetail(@Body String requestStr);
 
     class Creator {
         private static Strategy strategy = new AnnotationStrategy();

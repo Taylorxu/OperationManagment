@@ -69,6 +69,12 @@
         <activity
             android:name=".ui.activity.SelectOrderPanelActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.MyTemplateActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.TemplateDetailActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

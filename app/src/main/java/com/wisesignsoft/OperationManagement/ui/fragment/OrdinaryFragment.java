@@ -30,6 +30,7 @@ import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
+import com.wisesignsoft.OperationManagement.ui.activity.MyTemplateActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.SelectOrderPanelActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.SolvingActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.SolvedActivity;
@@ -190,15 +191,18 @@ public class OrdinaryFragment extends BaseFragment implements View.OnClickListen
                 intent = new Intent(getActivity(), SelectOrderPanelActivity.class);
                 startActivity(intent);
                 break;
-          /*  case "NEW_TEMPLATE"://新建模板
-                intent = new Intent(getActivity(), NewTemplateActivity.class);
-                startActivity(intent);
-                break;
+
             case "MY_TEMPLATE"://我的模板
                 intent = new Intent(getActivity(), MyTemplateActivity.class);
                 startActivity(intent);
                 break;
-            case "CONSTRACT_SEARCH"://合同信息
+         /*
+          case "NEW_TEMPLATE"://新建模板
+                intent = new Intent(getActivity(), NewTemplateActivity.class);
+                startActivity(intent);
+                break;
+
+         case "CONSTRACT_SEARCH"://合同信息
                 intent = new Intent(getActivity(), ContractInfoActivity.class);
                 intent.putExtra("key", resUrl.getResPar());
                 startActivity(intent);

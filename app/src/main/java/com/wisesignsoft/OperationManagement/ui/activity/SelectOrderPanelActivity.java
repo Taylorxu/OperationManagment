@@ -29,6 +29,9 @@ import java.util.List;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+/**
+ * 新建工单选择工单类型
+ */
 public class SelectOrderPanelActivity extends BaseActivity implements View.OnClickListener {
 
     private RelativeLayout rl_my_template;
@@ -64,7 +67,7 @@ public class SelectOrderPanelActivity extends BaseActivity implements View.OnCli
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_my_template:
-//                MyTemplateActivity.startSelf(SelectOrderPanelActivity.this, 9);
+                MyTemplateActivity.startSelf(SelectOrderPanelActivity.this, 9);
                 break;
             case R.id.bt_next:
                 int currentPosition = adapter.getCurrentPosition();

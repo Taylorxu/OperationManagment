@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_template_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.wisesignsoft.OperationManagement.mview.MyTitle
+        android:id="@+id/mt_template_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:padding="12dp"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_height="60dp">
+
+        <com.wisesignsoft.OperationManagement.mview.KeyValueView
+            android:id="@+id/kvv_template_detail"
+            android:layout_width="match_parent"
+            app:keyText="工单号："
+            app:keyColor="@color/c4"
+            app:keySize="14sp"
+            app:valueColor="@color/c5"
+            app:valueSize="14sp"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_alignParentBottom="true"
+        android:background="@color/home_line" />
+    <com.wisesignsoft.OperationManagement.mview.WorkOrderDetailView
+        android:id="@+id/wodv_template_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
