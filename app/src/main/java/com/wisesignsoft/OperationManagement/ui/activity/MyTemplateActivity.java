@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -12,28 +11,22 @@ import com.wisesignsoft.OperationManagement.BaseActivity;
 import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.adapter.MyTemplateAdapter;
-import com.wisesignsoft.OperationManagement.adapter.NewWorkOrderAdapter;
 import com.wisesignsoft.OperationManagement.bean.TempletListBean;
 import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.bean.VariousOrderBean;
-import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
 import com.wisesignsoft.OperationManagement.mview.EmptyView;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
 import com.wisesignsoft.OperationManagement.mview.RefreshRecyclerView;
 import com.wisesignsoft.OperationManagement.mview.SearchView;
-import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
 import com.wisesignsoft.OperationManagement.net.response.CustomSubscriber;
-import com.wisesignsoft.OperationManagement.net.response.DataTypeSelector;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
-import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
 import com.wisesignsoft.OperationManagement.utils.SwipeRefreshUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -103,10 +96,10 @@ public class MyTemplateActivity extends BaseActivity implements SwipeRefreshLayo
         adapter.setOnIMyTemplate(new MyTemplateAdapter.IMyTemplate() {
             @Override
             public void setOnClick(String id, String name) {
-                if (type == 0) {
+                if (type == 0) {//只展示模板相关的信息，不能再次编辑
                     TemplateDetailActivity.startSelf(MyTemplateActivity.this, id);
-                } else {
-//                    NewTemplateActivity3.startSelf(MyTemplateActivity.this, name, id);
+                } else {//底部有按钮，可编辑
+                    ReNewTemplateActivity.startSelf(MyTemplateActivity.this, name, id);
                 }
             }
         });

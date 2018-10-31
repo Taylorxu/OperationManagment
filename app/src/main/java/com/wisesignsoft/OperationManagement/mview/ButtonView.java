@@ -1,7 +1,6 @@
 package com.wisesignsoft.OperationManagement.mview;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -12,16 +11,15 @@ import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.ButtonModel;
 import com.wisesignsoft.OperationManagement.bean.ConditionJudgment;
 import com.wisesignsoft.OperationManagement.bean.NextNode;
-import com.wisesignsoft.OperationManagement.bean.Section;
 import com.wisesignsoft.OperationManagement.bean.StractgyBean;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.ui.activity.OrderSolvedActivity;
+import com.wisesignsoft.OperationManagement.ui.activity.ReNewTemplateActivity;
 import com.wisesignsoft.OperationManagement.utils.GsonHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
 
 public class ButtonView extends LinearLayout {
 
@@ -167,6 +165,8 @@ public class ButtonView extends LinearLayout {
 
         if (getContext() instanceof OrderSolvedActivity) {
             ((OrderSolvedActivity) getContext()).commit();
+        }else if (getContext() instanceof ReNewTemplateActivity) {
+            ((ReNewTemplateActivity) getContext()).commit();
         }
     }
 

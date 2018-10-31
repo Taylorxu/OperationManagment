@@ -8,6 +8,7 @@ import com.wisesignsoft.OperationManagement.bean.Children;
 import com.wisesignsoft.OperationManagement.bean.DictDatas;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.LinkServiceData;
+import com.wisesignsoft.OperationManagement.bean.ReNewTemplateBean;
 import com.wisesignsoft.OperationManagement.bean.ResourcesBean;
 import com.wisesignsoft.OperationManagement.bean.RoleBean;
 import com.wisesignsoft.OperationManagement.bean.SingleResModelListData;
@@ -202,6 +203,15 @@ public interface ApiService {
     //打开我的模板详情
     @POST(Protocol.process_host)
     Observable<Response<BaseDataResponse<TaskDetailBean>>> openTemplateDetail(@Body String requestStr);
+
+    //新建-从模板中选择
+    @POST(Protocol.process_host)
+    Observable<Response<ReNewTemplateBean>> createProcessByTemplet(@Body String requestStr);
+
+    //新建-从模板中选择-不保存
+    @POST(Protocol.process_host)
+    Observable<Response<BaseResponse>> deleteProcessInfoOnFirst(@Body String requestStr);
+
 
     class Creator {
         private static Strategy strategy = new AnnotationStrategy();

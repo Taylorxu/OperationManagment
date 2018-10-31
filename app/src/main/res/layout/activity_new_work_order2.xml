@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.wisesignsoft.OperationManagement.mview.MyTitle
+        android:id="@+id/mt_new_work_order_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="20dp">
+
+        <com.wisesignsoft.OperationManagement.mview.KeyValueView
+            android:id="@+id/kvv_new_work_order_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:keyColor="@color/c4"
+            app:keySize="14sp"
+            app:keyText="类型："
+            app:valueColor="@color/c5"
+            app:valueSize="14sp" />
+
+        <com.wisesignsoft.OperationManagement.mview.KeyValueView
+            android:id="@+id/kvv_new_work_order_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/kvv_new_work_order_type"
+            android:layout_marginTop="25dp"
+            app:keyColor="@color/c4"
+            app:keySize="14sp"
+            app:keyText="工单号："
+            app:valueColor="@color/c5"
+            app:valueSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="返回重选"
+            android:textColor="@color/c1" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/c9" />
+
+    <com.wisesignsoft.OperationManagement.mview.WorkOrderDetailView
+        android:id="@+id/wodv_new_work_order2"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp" />
+    <LinearLayout
+        android:id="@+id/ll_new_template"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/home_line"/>
+    </LinearLayout>
+</LinearLayout>
