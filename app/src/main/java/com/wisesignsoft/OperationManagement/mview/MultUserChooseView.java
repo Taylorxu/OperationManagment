@@ -93,7 +93,7 @@ public class MultUserChooseView extends LinearLayout implements RealmObjectChang
             List<String> list = new ArrayList<>();
             list.add(ids);
 
-            ApiService.Creator.get().queryValidUsersById(RequestBody.getgEnvelope(Protocol.yxyw_name_space, list, Protocol.queryValidUsersByIds))
+            ApiService.Creator.get().queryValidUsersByIds(RequestBody.getgEnvelope(Protocol.yxyw_name_space, list, Protocol.queryValidUsersByIds))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .flatMap(new FlatMapResponse<BaseDataResponse<List<AccountInfoBean>>>())

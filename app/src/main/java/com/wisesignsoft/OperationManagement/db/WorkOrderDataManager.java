@@ -417,14 +417,22 @@ public class WorkOrderDataManager {
      * @param fieldName
      * @param fieldValue
      */
-    public void modifyButtonModel(final String fieldName, final String fieldValue) {
+    public void modifyButtonModel(final String fieldName, final Object fieldValue) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 ButtonModel buttonModel = realm.where(ButtonModel.class).findFirst();
                 if (fieldName.equals("value")) {
-                    buttonModel.setValue(fieldValue);
+                    buttonModel.setValue(String.valueOf(fieldValue));
+                }
+                if(fieldName.equals("taskStrategy")){
+                    TaskStrategy taskStrategy=buttonModel.getTaskStrategy();
+                    if(taskStrategy==null)taskStrategy=realm.createObject(TaskStrategy.class);
+                    taskStrategy.setStrategyKey(((TaskStrategy) fieldValue).getStrategyKey());
+                    taskStrategy.setStrategyValue(((TaskStrategy) fieldValue).getStrategyValue());
+                    buttonModel.setTaskStrategy(taskStrategy);
+                    LogUtil.log(buttonModel.getTaskStrategy().getStrategyValue());
                 }
             }
         });

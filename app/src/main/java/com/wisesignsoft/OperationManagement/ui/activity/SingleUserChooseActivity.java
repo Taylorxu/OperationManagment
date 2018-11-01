@@ -107,7 +107,7 @@ public class SingleUserChooseActivity extends BaseActivity implements SearchView
         loadingView.show();
 
 
-        ApiService.Creator.get().queryValidUsersByUserName(RequestBody.getgEnvelope(yxyw_name_space, list, queryValidUsersByUserName))
+        ApiService.Creator.get().<AccountInfoBean>queryValidUsersByUserName(RequestBody.getgEnvelope(yxyw_name_space, list, queryValidUsersByUserName))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(new FlatMapResponse<BaseDataResponse<List<AccountInfoBean>>>())

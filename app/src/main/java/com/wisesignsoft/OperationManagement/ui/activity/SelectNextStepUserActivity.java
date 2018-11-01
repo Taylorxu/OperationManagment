@@ -6,20 +6,30 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.wisesignsoft.OperationManagement.BaseActivity;
+import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
-import com.wisesignsoft.OperationManagement.adapter.MultUserAdapter;
+import com.wisesignsoft.OperationManagement.adapter.SelectNextStepUserAdapter;
 import com.wisesignsoft.OperationManagement.bean.AccountInfoBean;
+import com.wisesignsoft.OperationManagement.bean.UserInfofRoleBean;
+import com.wisesignsoft.OperationManagement.bean.TaskStrategy;
+import com.wisesignsoft.OperationManagement.bean.User;
+import com.wisesignsoft.OperationManagement.bean.UserInfofRoleBean;
+import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.mview.EmptyView;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
 import com.wisesignsoft.OperationManagement.mview.SearchView;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
+import com.wisesignsoft.OperationManagement.net.response.BaseResponse;
+import com.wisesignsoft.OperationManagement.net.response.CustomSubscriber;
 import com.wisesignsoft.OperationManagement.net.response.DataTypeSelector;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
@@ -30,6 +40,7 @@ import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -38,24 +49,27 @@ import rx.schedulers.Schedulers;
 import static com.wisesignsoft.OperationManagement.Protocol.queryValidUsersByUserName;
 import static com.wisesignsoft.OperationManagement.Protocol.yxyw_name_space;
 
-public class MultUserChooseActivity extends BaseActivity implements SearchView.ISearchView {
+public class SelectNextStepUserActivity extends BaseActivity implements SearchView.ISearchView {
     private MyTitle mt_mult_user;
     private SearchView sv_mult_user;
     private TextView tv_mult_user_total;
     private RecyclerView rv_mult_user;
     private EmptyView ev_select_user;
     /*选中的数据*/
-    private List<AccountInfoBean> returnValue = new ArrayList<>();
-    private List<AccountInfoBean> datas = new ArrayList<>();
-    private String ids;
+    private List<UserInfofRoleBean> checkedData = new ArrayList<>();
+    /*数据源*/
+    private List<UserInfofRoleBean> userListData = new ArrayList<>();
     private String id;
+    private String ID;
+    private String taskKey;
     private String key;
-    private MultUserAdapter adapter;
+    private SelectNextStepUserAdapter adapter;
 
-    public static void startSelf(Context context, String ids, String id) {
-        Intent intent = new Intent(context, MultUserChooseActivity.class);
-        intent.putExtra("ids", ids);
+    public static void startSelf(Context context, String id, String ID, String taskKey) {
+        Intent intent = new Intent(context, SelectNextStepUserActivity.class);
         intent.putExtra("id", id);
+        intent.putExtra("ID", ID);
+        intent.putExtra("taskKey", taskKey);
         context.startActivity(intent);
     }
 
@@ -64,13 +78,14 @@ public class MultUserChooseActivity extends BaseActivity implements SearchView.I
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mult_user_choose);
         init();
-        requestWithoutParam();
+        request();
     }
 
     private void init() {
         /*获取前面的页面传递的数据*/
-        ids = getIntent().getStringExtra("ids");
         id = getIntent().getStringExtra("id");
+        ID = getIntent().getStringExtra("ID");
+        taskKey = getIntent().getStringExtra("taskKey");
 
         mt_mult_user = (MyTitle) findViewById(R.id.mt_mult_user);
         sv_mult_user = (SearchView) findViewById(R.id.sv_mult_user);
@@ -80,123 +95,130 @@ public class MultUserChooseActivity extends BaseActivity implements SearchView.I
         ev_select_user.setOnRefreshListener(new EmptyView.IRefreshListener() {
             @Override
             public void onRefresh() {
-                requestWithoutParam();
+                request();
             }
         });
 
         mt_mult_user.setBack(true, this);
-        mt_mult_user.setTitle("选择人员");
+        mt_mult_user.setTitle("工单处理人");
         mt_mult_user.setTvRight(true, "确定", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                WorkOrderDataManager.newInstance().modifyValue(id, MultUserChooseActivity.this.toString(returnValue));
-                finish();
+                String result = SelectNextStepUserActivity.this.lisTtoString(checkedData);
+                TaskStrategy taskStrategy = new TaskStrategy();
+                taskStrategy.setStrategyKey(taskKey);
+                taskStrategy.setStrategyValue(result);
+                WorkOrderDataManager.newInstance().modifyButtonModel("taskStrategy", taskStrategy);
+                commit();
             }
         });
 
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         rv_mult_user.setLayoutManager(manager);
         rv_mult_user.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
-        adapter = new MultUserAdapter(this, datas);
+        adapter = new SelectNextStepUserAdapter(this, userListData);
         rv_mult_user.setAdapter(adapter);
-        sv_mult_user.setISearchViewListener(this);
-    }
-
-
-    private void request(final List<String> list) {
-        final LoadingView loadingView = LoadingView.getLoadingView(this);
-        loadingView.show();
-
-
-        ApiService.Creator.get().<AccountInfoBean>queryValidUsersByUserName(RequestBody.getgEnvelope(yxyw_name_space, list, queryValidUsersByUserName))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(new FlatMapResponse<BaseDataResponse<List<AccountInfoBean>>>())
-                .flatMap(new FlatMapTopRes<List<AccountInfoBean>>(DataTypeSelector.RE))
-                .subscribe(new Subscriber<List<AccountInfoBean>>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        loadingView.stop(loadingView);
-                        ev_select_user.close();
-                        e.printStackTrace();
-                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(List<AccountInfoBean> response) {
-                        loadingView.stop(loadingView);
-                        ev_select_user.close();
-                        if (datas != null) {
-                            datas.clear();
-                        }
-                        datas.addAll(response);
-                        if (list.size() > 0) {
-                            setResults(MultUserChooseActivity.this.toString(returnValue));
-                        } else {
-                            setResults(ids);
-                        }
-                        initData();
-
-                    }
-
-                });
-    }
-
-    private void requestSearch() {
-        final LoadingView loadingView = LoadingView.getLoadingView(this);
-        loadingView.show();
-        List<String> list = new ArrayList<>();
-        list.add(key);
-        list.add("");
-        request(list);
-    }
-
-
-    private void requestWithoutParam() {
-        final LoadingView loadingView = LoadingView.getLoadingView(this);
-        loadingView.show();
-        List<String> list = new ArrayList<>();
-        request(list);
-    }
-
-    private void initData() {
-        setEmpty();
-        adapter.notifyDataSetChanged();
-        adapter.setIMultUserClickListener(new MultUserAdapter.IMultUserClickListener() {
+        adapter.setIMultUserClickListener(new SelectNextStepUserAdapter.IMultUserClickListener() {
             @Override
             public void setOnMultUserClickListener(int position, boolean isSelect) {
                 if (isSelect) {
-                    returnValue.add(datas.get(position));
+                    checkedData.add(userListData.get(position));
                 } else {
-                    returnValue.remove(datas.get(position));
+                    checkedData.remove(position);
                 }
 
             }
         });
+        sv_mult_user.setISearchViewListener(this);
+        sv_mult_user.setHint("请输入用户名");
     }
+
+    private void requestSearch() {
+        ev_select_user.close();
+        final LoadingView loadingView = LoadingView.getLoadingView(this);
+        loadingView.show();
+        List<String> list = new ArrayList<>();
+        list.add(key);
+        list.add(id);
+        ApiService.Creator.get().queryValidUsersByUserNameII(RequestBody.getgEnvelope(yxyw_name_space, list, queryValidUsersByUserName))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(new FlatMapResponse<BaseDataResponse<List<UserInfofRoleBean>>>())
+                .flatMap(new FlatMapTopRes<List<UserInfofRoleBean>>(DataTypeSelector.RE))
+                .subscribe(new CustomSubscriber<List<UserInfofRoleBean>>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        loadingView.stop(loadingView);
+                    }
+
+                    @Override
+                    public void onNext(List<UserInfofRoleBean> data) {
+                        initData(data, loadingView);
+                    }
+                });
+    }
+
+
+    //人员选择列表数据查询
+    private void request() {
+        ev_select_user.close();
+        final LoadingView loadingView = LoadingView.getLoadingView(this);
+        loadingView.show();
+        List<String> list = new ArrayList<>();
+        list.add(id);
+        ApiService.Creator.get().findUserByRoleId(RequestBody.getgEnvelope(Protocol.role_name_space, list, Protocol.findUserByRoleId))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .flatMap(new FlatMapResponse<List<UserInfofRoleBean>>())
+                .subscribe(new CustomSubscriber<List<UserInfofRoleBean>>() {
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        loadingView.stop(loadingView);
+                    }
+
+                    @Override
+                    public void onNext(List<UserInfofRoleBean> data) {
+                        initData(data, loadingView);
+                    }
+                });
+    }
+
+//TODO 选完人后提交工单
+    public void commit() {
+        final LoadingView loadingView = LoadingView.getLoadingView(this);
+        loadingView.show();
+    }
+
+    //渲染数据
+    private void initData(List<UserInfofRoleBean> data, LoadingView loadingView) {
+        loadingView.stop(loadingView);
+        if (userListData.size() > 0) userListData.clear();
+        userListData.addAll(data);
+        setResults(lisTtoString(checkedData));
+        setEmpty();
+        adapter.notifyDataSetChanged();
+
+    }
+
 
     private void setResults(String ids) {
         if (TextUtils.isEmpty(ids)) {
             return;
         }
         String[] temps = ids.split(",");
-        for (AccountInfoBean bean : datas) {
+        for (UserInfofRoleBean bean : userListData) {
             bean.setSelect(false);
             for (String temp : temps) {
                 if (temp.equals(bean.getUserId())) {
                     bean.setSelect(true);
-                    returnValue.add(bean);
                 }
             }
         }
     }
 
-    private String toString(List<AccountInfoBean> results) {
+    private String lisTtoString(List<UserInfofRoleBean> results) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < results.size(); i++) {
             String id = results.get(i).getUserId();
@@ -209,16 +231,6 @@ public class MultUserChooseActivity extends BaseActivity implements SearchView.I
         return sb.toString();
     }
 
-    private void setEmpty() {
-        if (datas == null || datas.size() == 0) {
-            ev_select_user.setVisibility(View.VISIBLE);
-            rv_mult_user.setVisibility(View.GONE);
-        } else {
-            ev_select_user.setVisibility(View.GONE);
-            rv_mult_user.setVisibility(View.VISIBLE);
-        }
-    }
-
     @Override
     public void setOnSearchListener(String key) {
         this.key = key;
@@ -228,6 +240,17 @@ public class MultUserChooseActivity extends BaseActivity implements SearchView.I
     @Override
     public void setOnCancelListener() {
         this.key = "";
-        requestWithoutParam();
+        request();
+    }
+
+
+    private void setEmpty() {
+        if (userListData == null || userListData.size() == 0) {
+            ev_select_user.setVisibility(View.VISIBLE);
+            rv_mult_user.setVisibility(View.GONE);
+        } else {
+            ev_select_user.setVisibility(View.GONE);
+            rv_mult_user.setVisibility(View.VISIBLE);
+        }
     }
 }

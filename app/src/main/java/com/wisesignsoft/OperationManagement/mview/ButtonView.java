@@ -16,6 +16,7 @@ import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.ui.activity.OrderSolvedActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.ReNewTemplateActivity;
+import com.wisesignsoft.OperationManagement.ui.activity.SelectNextStepUserActivity;
 import com.wisesignsoft.OperationManagement.utils.GsonHelper;
 
 import java.util.ArrayList;
@@ -129,7 +130,7 @@ public class ButtonView extends LinearLayout {
 
     private void toNode(NextNode nextNode) {
         String key = null, strategyValue = null;
-        StractgyBean bean;
+        StractgyBean bean = null;
         StractgyBean.StrategyValueBean strategyValueBean = null;
 
         if (nextNode != null) {
@@ -137,37 +138,25 @@ public class ButtonView extends LinearLayout {
             bean = GsonHelper.build().getObjectByJson(strategy, StractgyBean.class);
             key = bean.getStrategyKey();
             strategyValue = bean.getStrategyValue();
+            strategyValueBean = GsonHelper.build().getObjectByJson(strategyValue, StractgyBean.StrategyValueBean.class);
         }
 
         if (key == null) {
             key = "";
         }
-        /*if (getContext() instanceof NewTemplateActivity2) {
-            ((NewTemplateActivity2) getContext()).commit();
-        }else {
-            switch (key) {
-                case "assignee":
-                    WorkOrderSolvedUserActivity.startSelf(getContext(), value1.getRoleId(), button.getID(), "assignee");
-                    break;
-                case "assigneeForDept":
-                    WorkOrderSolvedUserActivity2.startSelf(getContext(), value1.getRoleId(), button.getID(), "assigneeForDept");
-                    break;
-                default:
-                    if (getContext() instanceof NewWorkOrderActivity2) {
-                        ((NewWorkOrderActivity2) getContext()).commit();
-                    } else if (getContext() instanceof NewTemplateActivity3) {
-                        ((NewTemplateActivity3) getContext()).commit();
-                    } else if (getContext() instanceof OrderSolvedActivity) {
-                        ((OrderSolvedActivity) getContext()).commit();
-                    }
-            }
-        }*/
 
-        if (getContext() instanceof OrderSolvedActivity) {
-            ((OrderSolvedActivity) getContext()).commit();
-        }else if (getContext() instanceof ReNewTemplateActivity) {
-            ((ReNewTemplateActivity) getContext()).commit();
+        switch (key) {
+            case "assignee":
+                SelectNextStepUserActivity.startSelf(getContext(), strategyValueBean.getRoleId(), buttonModel.getID(), "assignee");
+                break;
+            default:
+                if (getContext() instanceof OrderSolvedActivity) {
+                    ((OrderSolvedActivity) getContext()).commit();
+                } else if (getContext() instanceof ReNewTemplateActivity) {
+                    ((ReNewTemplateActivity) getContext()).commit();
+                }
         }
+
     }
 
 

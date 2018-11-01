@@ -17,6 +17,7 @@ import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
 import com.wisesignsoft.OperationManagement.bean.TaskOrderTrackBean;
 import com.wisesignsoft.OperationManagement.bean.TempletListBean;
 import com.wisesignsoft.OperationManagement.bean.User;
+import com.wisesignsoft.OperationManagement.bean.UserInfofRoleBean;
 import com.wisesignsoft.OperationManagement.bean.VariousOrderBean;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
 import com.wisesignsoft.OperationManagement.net.response.BaseResponse;
@@ -67,10 +68,14 @@ public interface ApiService {
      * @return
      */
     @POST(Protocol.yxyw_host)
-    Observable<Response<BaseDataResponse<List<AccountInfoBean>>>> queryValidUsersById(@Body String requestStr);
+    Observable<Response<BaseDataResponse<List<AccountInfoBean>>>> queryValidUsersByIds(@Body String requestStr);
 
     @POST(Protocol.yxyw_host)
     Observable<Response<BaseDataResponse<List<AccountInfoBean>>>> queryValidUsersByUserName(@Body String requestStr);
+
+    @POST(Protocol.yxyw_host)
+    Observable<Response<BaseDataResponse<List<UserInfofRoleBean>>>> queryValidUsersByUserNameII(@Body String requestStr);
+
 
     @POST(Protocol.yxyw_host)
     Observable<Response<BaseDataResponse<String>>> queryUnhandleProcessCount(@Body String requestStr);
@@ -211,6 +216,10 @@ public interface ApiService {
     //新建-从模板中选择-不保存
     @POST(Protocol.process_host)
     Observable<Response<BaseResponse>> deleteProcessInfoOnFirst(@Body String requestStr);
+
+    //选择人员列表
+    @POST(Protocol.role_host)
+    Observable<Response<List<UserInfofRoleBean>>> findUserByRoleId(@Body String requestStr);
 
 
     class Creator {

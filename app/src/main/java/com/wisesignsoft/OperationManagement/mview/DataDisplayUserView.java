@@ -73,7 +73,7 @@ public class DataDisplayUserView extends RelativeLayout implements RealmObjectCh
     private void getUserName(String id) {
         List<String> list = new ArrayList<>();
         list.add(id);
-        ApiService.Creator.get().queryValidUsersById(RequestBody.getgEnvelope(Protocol.yxyw_name_space, list, Protocol.queryValidUsersByIds))
+        ApiService.Creator.get().queryValidUsersByIds(RequestBody.getgEnvelope(Protocol.yxyw_name_space, list, Protocol.queryValidUsersByIds))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(new FlatMapResponse<BaseDataResponse<List<AccountInfoBean>>>())
