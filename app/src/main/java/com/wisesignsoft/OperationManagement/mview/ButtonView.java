@@ -14,6 +14,7 @@ import com.wisesignsoft.OperationManagement.bean.NextNode;
 import com.wisesignsoft.OperationManagement.bean.StractgyBean;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
+import com.wisesignsoft.OperationManagement.ui.activity.CreateOrderActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.OrderSolvedActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.ReNewTemplateActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.SelectNextStepUserActivity;
@@ -154,6 +155,8 @@ public class ButtonView extends LinearLayout {
                     ((OrderSolvedActivity) getContext()).commit();
                 } else if (getContext() instanceof ReNewTemplateActivity) {
                     ((ReNewTemplateActivity) getContext()).commit();
+                }else if (getContext() instanceof CreateOrderActivity) {
+                    ((CreateOrderActivity) getContext()).commit();
                 }
         }
 

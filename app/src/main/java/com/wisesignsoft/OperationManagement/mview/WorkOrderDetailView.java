@@ -74,7 +74,7 @@ public class WorkOrderDetailView extends LinearLayout {
                     continue;
                 }
                 String viewName = wo.getViewName();
-                createCompoent(viewName, context, wo, sectionView);
+                createComponent(viewName, context, wo, sectionView);
             }
         }
         realm.close();
@@ -173,7 +173,7 @@ public class WorkOrderDetailView extends LinearLayout {
     /**
      * 根据 条件 渲染组件
      */
-    private void createCompoent(String viewName, Context context, WorkOrder wo, SectionView sectionView) {
+    private void createComponent(String viewName, Context context, WorkOrder wo, SectionView sectionView) {
         switch (viewName) {
             case "TextInput":   //输入框
                 SingleTextView singleTextView = new SingleTextView(context);
@@ -205,6 +205,7 @@ public class WorkOrderDetailView extends LinearLayout {
                     sectionView.getLl_section_view().addView(treeSelectionView);
                     treeSelectionView.setData(wo);
                 }
+                break;
             case "ComboBox":    //组合框
                 BottomView bottomView = new BottomView(context);
                 sectionView.getLl_section_view().addView(bottomView);

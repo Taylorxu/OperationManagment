@@ -15,7 +15,7 @@ import com.wisesignsoft.OperationManagement.bean.Dict;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.ResColumnsJsonBean;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
-import com.wisesignsoft.OperationManagement.db.CallBack;
+import com.wisesignsoft.OperationManagement.db.MyCallBack;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.mview.BottomViewForDataGrid;
 import com.wisesignsoft.OperationManagement.mview.MyTitle;
@@ -98,7 +98,7 @@ public class ListActivity3 extends BaseActivity {
                     ll_list.addView(bottomView);
                     switch (b.getName()) {
                         case "SUB_TA":
-                            WorkOrderDataManager.newInstance().getDictDatasBySrclib("province", new CallBack<List<DictDatasBean>>() {
+                            WorkOrderDataManager.newInstance().getDictDatasBySrclib("province", new MyCallBack<List<DictDatasBean>>() {
                                 @Override
                                 public void onResponse(List<DictDatasBean> dictDatasBeans) {
                                     String dicKey = "";

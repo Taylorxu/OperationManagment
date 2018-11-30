@@ -1,5 +1,5 @@
 package com.wisesignsoft.OperationManagement.db;
 
-public  interface CallBack<T> {
+public  interface MyCallBack<T> {
     void onResponse(T t);
 }

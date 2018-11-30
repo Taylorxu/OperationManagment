@@ -16,12 +16,15 @@ import com.wisesignsoft.OperationManagement.Protocol;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.adapter.SelectNextStepUserAdapter;
 import com.wisesignsoft.OperationManagement.bean.AccountInfoBean;
+import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.UserInfofRoleBean;
 import com.wisesignsoft.OperationManagement.bean.TaskStrategy;
 import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.bean.UserInfofRoleBean;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
+import com.wisesignsoft.OperationManagement.db.MyCallBack;
 import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
+import com.wisesignsoft.OperationManagement.db.PublicRequest;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.mview.EmptyView;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
@@ -35,10 +38,14 @@ import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
+import com.wisesignsoft.OperationManagement.utils.ActivityTaskManager;
 import com.wisesignsoft.OperationManagement.utils.DividerItemDecoration;
 import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
+import com.wisesignsoft.OperationManagement.utils.GsonHelper;
+import com.wisesignsoft.OperationManagement.utils.ToastUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -185,10 +192,22 @@ public class SelectNextStepUserActivity extends BaseActivity implements SearchVi
                 });
     }
 
-//TODO 选完人后提交工单
     public void commit() {
         final LoadingView loadingView = LoadingView.getLoadingView(this);
         loadingView.show();
+        PublicRequest.newInstance().submitTask(this, new MyCallBack<Integer>() {
+            @Override
+            public void onResponse(Integer state) {
+                loadingView.stop(loadingView);
+                if (state == 0) {//成功
+                    Toast.makeText(getBaseContext(), "提交成功", Toast.LENGTH_SHORT).show();
+                    ActivityTaskManager.newInstance().clear();
+                    finish();
+                } else if (state == 1) {
+                    Toast.makeText(getBaseContext(), "提交失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     //渲染数据

@@ -1,5 +1,7 @@
 package com.wisesignsoft.OperationManagement.bean;
 
+import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 import io.realm.RealmObject;
@@ -10,8 +12,19 @@ import io.realm.annotations.PrimaryKey;
  * 字典数据
  */
 public class DictDatasBean extends RealmObject {
+    public DictDatasBean() {
+    }
+
+    public DictDatasBean(String dictId, String dictValue, String dictParentValue, @Nullable String dictName, String srclib) {
+        this.dictId = dictId;
+        this.dictValue = dictValue;
+        this.dictParentValue = dictParentValue;
+        this.dictName = dictName;
+        this.srclib = srclib;
+    }
+
     @PrimaryKey
-    @Index
+    private String id=UUID.randomUUID().toString();
     private String dictId;
     private String dictValue;
     private String dictParentValue;

@@ -1,0 +1,39 @@
+ext.deps = [:]
+
+def deps = [:]
+
+def versions = [:]
+versions.support = '28.0.0-beta01'
+versions.retrofit2 = '2.1.0'
+
+def build_versions = [:]
+build_versions.minSdk = 26
+build_versions.targetSdk = 28
+deps.build_versions=build_versions
+
+def support = [:]
+support.appcompat = "com.android.support:appcompat-v7:$versions.support"
+support.support = "com.android.support:support-v4:$versions.support"
+support.recyclerview = "com.android.support:recyclerview-v7:$versions.support"
+support.constrain_layout='com.android.support.constraint:constraint-layout:1.1.2'
+deps.support = support
+
+def retrofit = [:]
+
+retrofit.retrofit = "com.squareup.retrofit2:retrofit:$versions.retrofit2"
+retrofit.converter = "com.squareup.retrofit2:converter-gson:$versions.retrofit2"
+retrofit.adapter = "com.squareup.retrofit2:adapter-rxjava:$versions.retrofit2"
+deps.retrofit = retrofit
+
+def okhttp = [:]
+okhttp.okhttp = 'com.squareup.okhttp3:okhttp:3.8.0'
+okhttp.loginterceptor = 'com.parkingwang:okhttp3-loginterceptor:0.5'
+okhttp.interceptor = 'com.squareup.okhttp3:logging-interceptor:3.1.2'
+deps.okhttp=okhttp
+
+def rxjava=[:]
+rxjava.rxjava='io.reactivex:rxjava:1.1.6'
+rxjava.rxandroid= 'io.reactivex:rxandroid:1.2.1'
+deps.rxjava=rxjava
+
+ext.deps=deps

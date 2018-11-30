@@ -1,25 +1,26 @@
 package com.wisesignsoft.OperationManagement.bean;
 
 import java.util.List;
+import java.util.UUID;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class DictDatas extends RealmObject {
+
+    public DictDatas(String key) {
+        this.key = key;
+    }
+
+    public DictDatas() {
+    }
+
     private String isTree;
     @PrimaryKey
-    private int id;
+    private String id=UUID.randomUUID().toString();
     private String key;
     private RealmList<DictDatasBean> dictDatas;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getKey() {
         return key;

@@ -6,7 +6,7 @@ import io.realm.RealmObject;
  * Created by ycs on 2017/1/9.
  */
 
-public class TaskStrategy extends RealmObject{
+public class TaskStrategy extends RealmObject {
 
     /**
      * strategyKey : assignee
@@ -30,5 +30,9 @@ public class TaskStrategy extends RealmObject{
 
     public void setStrategyValue(String strategyValue) {
         this.strategyValue = strategyValue;
+    }
+
+    public String toJson() {
+        return "{ \"strategyKey\":\"" + strategyKey + "\",\"strategyValue\":\"" + strategyValue + "\"}";
     }
 }

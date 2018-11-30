@@ -13,10 +13,9 @@ import android.widget.TextView;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.adapter.NewWorkOrderAdapter;
 import com.wisesignsoft.OperationManagement.adapter.SingleSelectViewAdapter;
-import com.wisesignsoft.OperationManagement.bean.CanCreateProcessBean;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
-import com.wisesignsoft.OperationManagement.db.CallBack;
+import com.wisesignsoft.OperationManagement.db.MyCallBack;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
@@ -78,7 +77,7 @@ public class SingleSelectView extends LinearLayout implements RealmObjectChangeL
         }
         adapter.setClick(wo.isModified());
         //根据字典初始化组件 例如 ‘是否立即开工’
-        WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new CallBack<List<DictDatasBean>>() {
+        WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new MyCallBack<List<DictDatasBean>>() {
             @Override
             public void onResponse(List<DictDatasBean> dictDatasBeans) {
                 if (dictDatasBeans.size() > 0) {

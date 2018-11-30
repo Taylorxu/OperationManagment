@@ -8,14 +8,11 @@ import android.widget.RelativeLayout;
 
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
-import com.wisesignsoft.OperationManagement.bean.EventClassificationModel;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
-import com.wisesignsoft.OperationManagement.db.CallBack;
+import com.wisesignsoft.OperationManagement.db.MyCallBack;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
-import com.wisesignsoft.OperationManagement.ui.activity.EventClassificationActivity;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -45,20 +42,18 @@ public class BottomView extends RelativeLayout implements RealmObjectChangeListe
         this.wo = wo;
         wo.addChangeListener(this);
         String title = wo.getName();
-        String value = wo.getValue();
+        final String value = wo.getValue();
         if (!TextUtils.isEmpty(value)) {//用户选择的时候value值是字典的ID
-            if (value.indexOf(":")>-1) {
-                WorkOrderDataManager.newInstance().getDicValueById(value, new CallBack<String>() {
-                    @Override
-                    public void onResponse(String dicValue) {
-                        if (!TextUtils.isEmpty(dicValue)) {
-                            baseView.setTv_right(dicValue);
-                        }
+            WorkOrderDataManager.newInstance().getDicValueById(value, wo.getSrclib(), new MyCallBack<String>() {
+                @Override
+                public void onResponse(String dicValue) {
+                    if (!TextUtils.isEmpty(dicValue)) {
+                        baseView.setTv_right(dicValue);
+                    } else {
+                        baseView.setTv_right(value);//value有可能是字典的值；所以查不到直接赋值
                     }
-                });
-            } else {//value 是字典的值
-                baseView.setTv_right(value);
-            }
+                }
+            });
         } else {
             baseView.setTv_right("");
         }
@@ -85,7 +80,7 @@ public class BottomView extends RelativeLayout implements RealmObjectChangeListe
     class ClickListener implements OnClickListener {
         @Override
         public void onClick(View view) {
-            WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new CallBack<List<DictDatasBean>>() {
+            WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new MyCallBack<List<DictDatasBean>>() {
                 @Override
                 public void onResponse(List<DictDatasBean> dictDatasBeans) {
                     final BottomDialog dialog = new BottomDialog(getContext(), R.style.add_dialog);

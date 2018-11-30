@@ -56,7 +56,7 @@ public class User extends RealmObject {
         realm.beginTransaction();
         User results = realm.where(User.class).findFirst();
         realm.commitTransaction();
-        return realm.copyFromRealm(results);
+        return results == null ? results : realm.copyFromRealm(results);
     }
 
     public static void updateUser(User userp) {

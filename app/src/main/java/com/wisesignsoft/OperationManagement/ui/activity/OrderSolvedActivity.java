@@ -25,7 +25,9 @@ import com.wisesignsoft.OperationManagement.bean.ButtonModel;
 import com.wisesignsoft.OperationManagement.bean.NextNode;
 import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.User;
+import com.wisesignsoft.OperationManagement.db.MyCallBack;
 import com.wisesignsoft.OperationManagement.db.MySharedpreferences;
+import com.wisesignsoft.OperationManagement.db.PublicRequest;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.mview.ButtonView;
 import com.wisesignsoft.OperationManagement.mview.LoadingView;
@@ -38,6 +40,7 @@ import com.wisesignsoft.OperationManagement.net.response.FlatMapResponse;
 import com.wisesignsoft.OperationManagement.net.response.FlatMapTopRes;
 import com.wisesignsoft.OperationManagement.net.service.ApiService;
 import com.wisesignsoft.OperationManagement.net.service.RequestBody;
+import com.wisesignsoft.OperationManagement.utils.ActivityTaskManager;
 import com.wisesignsoft.OperationManagement.utils.EEMsgToastHelper;
 import com.wisesignsoft.OperationManagement.utils.GsonHelper;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
@@ -62,10 +65,11 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class OrderSolvedActivity extends BaseActivity {
+public class OrderSolvedActivity extends OrderDetailRootActivity {
 
     private BMForm bmForm;
     private String taskId;
+    private List xmlDatas;
     private String taskNodeType;
     private ImageView loadingImg;
     private String pikey, current;
@@ -86,23 +90,16 @@ public class OrderSolvedActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_solved);
+        ActivityTaskManager.newInstance().setList(this);
         init();
-        getIntentParams(getIntent());
+        requestDetail();
     }
 
-    /**
-     * 从新建界面过来，如果下一环节的处理人时同一个
-     *
-     * @param intent
-     */
-    public void getIntentParams(Intent intent) {
-        if (intent.getParcelableExtra("Data") != null) {
-            refreshDataToView((TaskDetailBean) intent.getParcelableExtra("Data"));
-            crossfade();
-        } else {
-            requestDetail();
-        }
+    @Override
+    public void setButton() {
+        super.setButton(ll_new_temp, xmlDatas);
     }
+
 
     private void init() {
         mt_order_solved = (MyTitle) findViewById(R.id.mt_order_solved);
@@ -153,9 +150,9 @@ public class OrderSolvedActivity extends BaseActivity {
                     @Override
                     public void onNext(TaskDetailBean taskDetailBean) {
                         setMapInit(taskDetailBean);
-                        List datas = PullPaseXmlUtil.pase(taskDetailBean.getFormDocument());
-                        wodv_solved.refreshRealmData(datas);
-                        setButton(datas);
+                        xmlDatas = PullPaseXmlUtil.pase(taskDetailBean.getFormDocument());
+                        wodv_solved.refreshRealmData(xmlDatas);
+                        setButton();
                         crossfade();
                     }
                 });
@@ -165,48 +162,18 @@ public class OrderSolvedActivity extends BaseActivity {
     public void commit() {
         final LoadingView loadingView = LoadingView.getLoadingView(this);
         loadingView.show();
-        if (!WorkOrderDataManager.newInstance().checkEmptyValue(this)) {
-            loadingView.stop(loadingView);
-            return;
-        } else {
-            WorkOrderDataManager.newInstance().fillFormValue();
-        }
-        String result = GsonHelper.build().objectToJsonString(WorkOrderDataManager.parameterMap);
-        List<String> list = new ArrayList<>(Arrays.asList(result, User.getUserFromRealm().getUsername()));
-        ApiService.Creator.get().submitTask(RequestBody.getgEnvelope(Protocol.process_name_space, list, Protocol.submitTask))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .flatMap(new FlatMapResponse<TaskDetailBean>())
-                .subscribe(new Subscriber<TaskDetailBean>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        EEMsgToastHelper.newInstance().selectWitch(e.getMessage());
-                        loadingView.stop(loadingView);
-                    }
-
-                    @Override
-                    public void onNext(TaskDetailBean response) {
-                        loadingView.stop(loadingView);
-                        if (response.getState().equals("0")) {
-                            if (response.isSame) {
-                                Toast.makeText(OrderSolvedActivity.this, "提交成功,为你打开下一环节", Toast.LENGTH_SHORT).show();
-                                refreshDataToView(response);
-                            } else {
-                                Toast.makeText(OrderSolvedActivity.this, "提交成功", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                        } else {
-                            ToastUtil.toast(getBaseContext(), response.getState());
-                        }
-
-                    }
-                });
+        PublicRequest.newInstance().submitTask(this, new MyCallBack<Integer>() {
+            @Override
+            public void onResponse(Integer state) {
+                loadingView.stop(loadingView);
+                if (state == 0) {//成功
+                    Toast.makeText(getBaseContext(), "提交成功", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else if (state == 1) {
+                    Toast.makeText(getBaseContext(), "提交失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
     }
 
@@ -222,7 +189,7 @@ public class OrderSolvedActivity extends BaseActivity {
         setMapInit(detailResponse);
         List datas = PullPaseXmlUtil.pase(detailResponse.getFormDocument());
         wodv_solved.refreshRealmData(datas);
-        setButton(datas);
+        setButton();
     }
 
     public void setMapInit(TaskDetailBean response) {
@@ -238,23 +205,6 @@ public class OrderSolvedActivity extends BaseActivity {
 
     }
 
-    //生成提交按钮
-    private void setButton(List datas) {
-        if (ll_new_temp.getChildCount() > 1) ll_new_temp.removeViewAt(1);
-        for (Object o : datas) {
-            if (o instanceof ButtonModel) {
-                List<NextNode> list = ((ButtonModel) o).getNextNode();
-                if (list == null || list.size() == 0) {
-                    continue;
-                }
-                ButtonView buttonView = new ButtonView(this);
-                buttonView.setData((ButtonModel) o, bmForm.getConditionJudgment());
-                ll_new_temp.addView(buttonView);
-            } else if (o instanceof BMForm) {
-                bmForm = ((BMForm) o);
-            }
-        }
-    }
 
     private void save() {
         MyDialog dialog = new MyDialog(this);
@@ -272,39 +222,23 @@ public class OrderSolvedActivity extends BaseActivity {
         dialog.show();
     }
 
-    /**
-     * 保存工单到草稿
-     */
     private void requestSure() {
         final LoadingView loadingView = LoadingView.getLoadingView(this);
         loadingView.show();
         String result = GsonHelper.build().objectToJsonString(WorkOrderDataManager.newInstance().getReturnStringModelForDraft());
         List<String> list = new ArrayList<>(Arrays.asList(result, User.getUserFromRealm().getUsername()));
-        ApiService.Creator.get().saveProcessSketch(RequestBody.getgEnvelope(Protocol.process_name_space, list, Protocol.saveProcessSketch))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .flatMap(new FlatMapResponse<Integer>())
-                .subscribe(new CustomSubscriber<Integer>() {
-
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                        loadingView.stop(loadingView);
-                    }
-
-                    @Override
-                    public void onNext(Integer state) {
-                        super.onNext(state);
-                        if (state == 0) {
-                            Toast.makeText(OrderSolvedActivity.this, getString(R.string.save_draft_succeed), Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-                            Toast.makeText(OrderSolvedActivity.this, getString(R.string.save_draft_failed), Toast.LENGTH_SHORT).show();
-                        }
-                        loadingView.stop(loadingView);
-
-                    }
-                });
+        PublicRequest.newInstance().requestSure(list, new MyCallBack<Integer>() {
+            @Override
+            public void onResponse(Integer state) {
+                loadingView.stop(loadingView);
+                if (state == 0) {
+                    Toast.makeText(getBaseContext(), "保存草稿成功", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(getBaseContext(), "保存草稿失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void requestCancel() {

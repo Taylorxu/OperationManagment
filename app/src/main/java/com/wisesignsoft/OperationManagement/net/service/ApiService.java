@@ -119,7 +119,7 @@ public interface ApiService {
 
     //提交表单数据
     @POST(Protocol.process_host)
-    Observable<Response<TaskDetailBean>> submitTask(@Body String requestStr);
+    Observable<Response<Integer>> submitTask(@Body String requestStr);
 
 
     /**
@@ -215,11 +215,14 @@ public interface ApiService {
 
     //新建-从模板中选择-不保存
     @POST(Protocol.process_host)
-    Observable<Response<BaseResponse>> deleteProcessInfoOnFirst(@Body String requestStr);
+    Observable<Response<Integer>> deleteProcessInfoOnFirst(@Body String requestStr);
 
     //选择人员列表
     @POST(Protocol.role_host)
     Observable<Response<List<UserInfofRoleBean>>> findUserByRoleId(@Body String requestStr);
+    //根据工单类型创建新单
+    @POST(Protocol.process_host)
+    Observable<Response<TaskDetailBean>> createProcessByKeyAndCreator(@Body String requestStr);
 
 
     class Creator {

@@ -11,7 +11,7 @@ import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
 import com.wisesignsoft.OperationManagement.bean.EventClassificationModel;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
-import com.wisesignsoft.OperationManagement.db.CallBack;
+import com.wisesignsoft.OperationManagement.db.MyCallBack;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.ui.activity.EventClassificationActivity;
 import com.wisesignsoft.OperationManagement.utils.LogUtil;
@@ -55,7 +55,7 @@ public class TreeSelectionView extends RelativeLayout implements RealmObjectChan
         final String woId = wo.getID();
         String title = wo.getName();
         final String content = wo.getValue();
-        WorkOrderDataManager.newInstance().getDicValueById(content, new CallBack<String>() {
+        WorkOrderDataManager.newInstance().getDicValueById(content,wo.getSrclib(), new MyCallBack<String>() {
             @Override
             public void onResponse(String dicValue) {
                 if (!TextUtils.isEmpty(dicValue)) {
@@ -88,7 +88,7 @@ public class TreeSelectionView extends RelativeLayout implements RealmObjectChan
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new CallBack<List<DictDatasBean>>() {
+                        WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new MyCallBack<List<DictDatasBean>>() {
                             @Override
                             public void onResponse(List<DictDatasBean> dictDatasBeans) {
                                 list1 = new ArrayList<>();

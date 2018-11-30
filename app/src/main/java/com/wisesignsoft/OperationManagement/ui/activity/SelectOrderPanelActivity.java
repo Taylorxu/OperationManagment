@@ -74,7 +74,7 @@ public class SelectOrderPanelActivity extends BaseActivity implements View.OnCli
                 if (currentPosition == -1) {
                     Toast.makeText(SelectOrderPanelActivity.this, "请选中一个类型", Toast.LENGTH_SHORT).show();
                 } else {
-//                    NewWorkOrderActivity2.startSelf(SelectOrderPanelActivity.this, datas.get(currentPosition).getKey(), datas.get(currentPosition).getName());
+                    CreateOrderActivity.startSelf(SelectOrderPanelActivity.this, datas.get(currentPosition).getKey(), datas.get(currentPosition).getName());
                 }
                 break;
         }

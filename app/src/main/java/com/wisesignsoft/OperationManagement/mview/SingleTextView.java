@@ -47,11 +47,27 @@ public class SingleTextView extends LinearLayout implements RealmObjectChangeLis
      *
      * @param wo
      */
-    public void setData(WorkOrder wo) {
+    public void setData(final WorkOrder wo) {
         this.wo = wo;
         wo.addChangeListener(this);
         String title = wo.getName();
         String content = wo.getValue();
+        et_single_text.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+               WorkOrderDataManager.newInstance().modifyValue(wo.getID(),s.toString());
+            }
+        });
         if (!TextUtils.isEmpty(title)) {
             if (wo.isRequired()) {
                 tv_single_text.setText(title + " *");
@@ -59,10 +75,8 @@ public class SingleTextView extends LinearLayout implements RealmObjectChangeLis
                 tv_single_text.setText(title);
             }
         }
-        if (TextUtils.isEmpty(content)) {
-            et_single_text.setText("");
-        }
-        if (!TextUtils.isEmpty(content) && !content.equals(et_single_text.getText().toString())) {
+
+        if (!content.equals(et_single_text.getText().toString())) {
             et_single_text.setText(content);
         }
         if (!wo.isModified()) {
@@ -82,7 +96,7 @@ public class SingleTextView extends LinearLayout implements RealmObjectChangeLis
      * @param key
      * @param value
      */
-    public void setData(String key, String value,boolean request,boolean modify) {
+    public void setData(String key, String value, boolean request, boolean modify) {
         if (!TextUtils.isEmpty(key)) {
             if (request) {
                 tv_single_text.setText(key + " *");
@@ -115,7 +129,7 @@ public class SingleTextView extends LinearLayout implements RealmObjectChangeLis
             return;
         }
         LogUtil.log(workOrder.getViewName() + "组件的value被改成" + workOrder.getValue());
-        setData(workOrder);
+
         WorkOrderDataManager.newInstance().setValueForLinkWorkOrder(workOrder);
     }
 }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -13,11 +12,9 @@ import android.widget.TextView;
 import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.adapter.CheckBoxViewAdapter;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
-import com.wisesignsoft.OperationManagement.bean.EventClassificationModel;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
-import com.wisesignsoft.OperationManagement.db.CallBack;
+import com.wisesignsoft.OperationManagement.db.MyCallBack;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
-import com.wisesignsoft.OperationManagement.ui.activity.EventClassificationActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +67,7 @@ public class CheckBoxView extends LinearLayout implements CheckBoxViewAdapter.IC
                 tv_check_box.setText(str);
             }
         }
-        WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new CallBack<List<DictDatasBean>>() {
+        WorkOrderDataManager.newInstance().getDictDatasBySrclib(wo.getSrclib(), new MyCallBack<List<DictDatasBean>>() {
             @Override
             public void onResponse(List<DictDatasBean> dictDatasBeans) {
                 lists.addAll(dictDatasBeans);

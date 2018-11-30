@@ -2,7 +2,6 @@ package com.wisesignsoft.OperationManagement.db;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -17,7 +16,6 @@ import com.wisesignsoft.OperationManagement.bean.LinkParameter;
 import com.wisesignsoft.OperationManagement.bean.LinkServiceData;
 import com.wisesignsoft.OperationManagement.bean.NextNode;
 import com.wisesignsoft.OperationManagement.bean.ResModeValue;
-import com.wisesignsoft.OperationManagement.bean.Section;
 import com.wisesignsoft.OperationManagement.bean.TaskStrategy;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.net.response.BaseDataResponse;
@@ -33,12 +31,9 @@ import com.wisesignsoft.OperationManagement.utils.LogUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import io.realm.ProxyState;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmQuery;
@@ -133,47 +128,54 @@ public class WorkOrderDataManager {
     /**
      * 更新realm的字典数据
      *
-     * @param dictDatas
+     * @param dictDatasList
      */
-    public void refreshAllValidDictData(final List<DictDatas> dictDatas) {
+    public void refreshAllValidDictData(final List<DictDatas> dictDatasList) {
 
         final Realm realm = Realm.getDefaultInstance();
-        for (int i = 0; i < dictDatas.size(); i++) {
-            final int finalI = i;
-            final DictDatas dic = dictDatas.get(finalI);
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    if (dic.getDictDatas() != null) {
-                        final List<DictDatasBean> dictDatasBeans = new ArrayList<>();
-                        for (DictDatasBean dictDatasBean : dic.getDictDatas()) {
-                            dictDatasBean.setSrclib(dic.getKey());
-                            dictDatasBeans.add(dictDatasBean);
-                        }
-                        realm.insertOrUpdate(dictDatasBeans);
-                    }
-                }
-            });
+
+        realm.beginTransaction();
+        RealmResults<DictDatasBean> dicData = realm.where(DictDatasBean.class).findAll();
+        RealmResults<DictDatas> rootDicData = realm.where(DictDatas.class).findAll();
+        if (dicData.isLoaded() && dicData.size() > 0) {
+            dicData.deleteAllFromRealm();
+            rootDicData.deleteAllFromRealm();
         }
+
+        for (final DictDatas dic : dictDatasList) {
+            DictDatas dictDatas = new DictDatas(dic.getKey());
+            if (dic.getDictDatas() != null) {
+                RealmList<DictDatasBean> datasBeanRealmList = new RealmList<>();
+                for (final DictDatasBean bean : dic.getDictDatas()) {
+                    datasBeanRealmList.add(new DictDatasBean(bean.getDictId(),
+                            bean.getDictValue(), bean.getDictParentValue(), bean.getDictName(), dic.getKey()));
+                }
+                dictDatas.setDictDatas(datasBeanRealmList);
+            }
+            realm.copyToRealmOrUpdate(dictDatas);
+
+        }
+        realm.commitTransaction();
         realm.close();
     }
 
     /**
      * 根据 srclib 字典模型编码 去获取对应的字典集合
      */
-    public void getDictDatasBySrclib(final String srclib, final CallBack<List<DictDatasBean>> callBack) {
+    public void getDictDatasBySrclib(final String srclib, final MyCallBack<List<DictDatasBean>> myCallBack) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<DictDatasBean> realmResults = realm.where(DictDatasBean.class).equalTo("srclib", srclib).findAll();
-                if (realmResults.isLoaded()) {
-                    List<DictDatasBean> beanList = Arrays.asList(realmResults.toArray(new DictDatasBean[]{}));
-                    callBack.onResponse(beanList);
+               DictDatas dictDatasResults = realm.where(DictDatas.class).equalTo("key",srclib).findFirst();
+                RealmList<DictDatasBean> beanRealmList=dictDatasResults.getDictDatas();
+                if (beanRealmList.isLoaded()) {
+                    List<DictDatasBean> beanList = Arrays.asList(beanRealmList.toArray(new DictDatasBean[]{}));
+                    myCallBack.onResponse(beanList);
                 }
-
             }
         });
+
         realm.close();
 
     }
@@ -182,19 +184,20 @@ public class WorkOrderDataManager {
      * 根据字典的ID 查找出对应的值
      *
      * @param value
+     * @param srclib
      * @return
      */
-    public void getDicValueById(final String value, final CallBack<String> callBack) {
+    public void getDicValueById(final String value, String srclib, final MyCallBack<String> myCallBack) {
         if (TextUtils.isEmpty(value)) {
-            callBack.onResponse("");
+            myCallBack.onResponse("");
             return;
         }
         Realm realm = Realm.getDefaultInstance();
         if (!realm.isInTransaction()) realm.beginTransaction();
         RealmQuery<DictDatasBean> realmQuery = realm.where(DictDatasBean.class);
-        DictDatasBean dictDatasBean = realmQuery.equalTo("dictId", value).findFirst();
+        DictDatasBean dictDatasBean = realmQuery.equalTo("dictId", value).equalTo("srclib",srclib).findFirst();
         if (dictDatasBean != null)
-            callBack.onResponse(dictDatasBean.getDictName());
+            myCallBack.onResponse(dictDatasBean.getDictName());
         if (realm.isInTransaction()) realm.commitTransaction();
         realm.close();
     }
@@ -385,15 +388,15 @@ public class WorkOrderDataManager {
     }
 
     /**
-     * @param callBack
+     * @param myCallBack
      */
-    public void queryAllWorkOrder(final CallBack<RealmResults<WorkOrder>> callBack) {
+    public void queryAllWorkOrder(final MyCallBack<RealmResults<WorkOrder>> myCallBack) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 RealmResults<WorkOrder> results = realm.where(WorkOrder.class).findAll();
-                if (results.isLoaded()) callBack.onResponse(results);
+                if (results.isLoaded()) myCallBack.onResponse(results);
             }
         });
     }
@@ -426,9 +429,9 @@ public class WorkOrderDataManager {
                 if (fieldName.equals("value")) {
                     buttonModel.setValue(String.valueOf(fieldValue));
                 }
-                if(fieldName.equals("taskStrategy")){
-                    TaskStrategy taskStrategy=buttonModel.getTaskStrategy();
-                    if(taskStrategy==null)taskStrategy=realm.createObject(TaskStrategy.class);
+                if (fieldName.equals("taskStrategy")) {
+                    TaskStrategy taskStrategy = buttonModel.getTaskStrategy();
+                    if (taskStrategy == null) taskStrategy = realm.createObject(TaskStrategy.class);
                     taskStrategy.setStrategyKey(((TaskStrategy) fieldValue).getStrategyKey());
                     taskStrategy.setStrategyValue(((TaskStrategy) fieldValue).getStrategyValue());
                     buttonModel.setTaskStrategy(taskStrategy);
@@ -478,7 +481,7 @@ public class WorkOrderDataManager {
      */
     public boolean checkEmptyValue(final Context context) {
         final boolean[] ok = {true};
-        queryAllWorkOrder(new CallBack<RealmResults<WorkOrder>>() {
+        queryAllWorkOrder(new MyCallBack<RealmResults<WorkOrder>>() {
             @Override
             public void onResponse(RealmResults<WorkOrder> workOrders) {
                 for (WorkOrder wo : workOrders) {
@@ -497,7 +500,7 @@ public class WorkOrderDataManager {
      * 表单数据放到集合里，作为提交单接口参数
      */
     public void fillFormValue() {
-        queryAllWorkOrder(new CallBack<RealmResults<WorkOrder>>() {
+        queryAllWorkOrder(new MyCallBack<RealmResults<WorkOrder>>() {
             @Override
             public void onResponse(RealmResults<WorkOrder> workOrders) {
                 for (WorkOrder wo : workOrders) {
@@ -512,13 +515,12 @@ public class WorkOrderDataManager {
                 ButtonModel buttonModel = realm.where(ButtonModel.class).findFirst();
                 String json = buttonModel.getValue();
                 TaskStrategy taskStrategy = buttonModel.getTaskStrategy();
-                Gson gson = new Gson();
                 NextNode node = GsonHelper.build().getObjectByJson(json, NextNode.class);
                 parameterMap.put("outCome", node.getName());
                 parameterMap.put("outComeDesc", node.getNameDesc());
                 parameterMap.put("specificValueUpdate", node.getSpecificValueUpdate());
                 if (taskStrategy != null) {
-                    parameterMap.put("taskStrategy", gson.toJson(taskStrategy));
+                    parameterMap.put("taskStrategy", taskStrategy.toJson());
                 } else {
                     String temp = node.getTaskStrategy();
                     parameterMap.put("taskStrategy", temp);
@@ -536,7 +538,7 @@ public class WorkOrderDataManager {
      * @return
      */
     public Map<String, String> getReturnStringModelForDraft() {
-        queryAllWorkOrder(new CallBack<RealmResults<WorkOrder>>() {
+        queryAllWorkOrder(new MyCallBack<RealmResults<WorkOrder>>() {
             @Override
             public void onResponse(RealmResults<WorkOrder> workOrders) {
                 for (WorkOrder wo : workOrders) {
