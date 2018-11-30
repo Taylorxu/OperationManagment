@@ -4,17 +4,19 @@ package com.wisesignsoft.OperationManagement.utils;
 import com.wisesignsoft.OperationManagement.ui.activity.CreateOrderActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.OrderSolvedActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.ReNewTemplateActivity;
+import com.wisesignsoft.OperationManagement.ui.activity.SelectNextStepUserActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 当 {@OrderSolvedActivity} 界面中的提交按钮，需要跳转到选择下一处理人的界面{@SelectNextStepUserActivity}。
+ * 例如 当 {@link OrderSolvedActivity} 界面中的提交按钮，需要跳转到选择下一处理人的界面{@link SelectNextStepUserActivity}。
  * 在此界面成功提交单子后，要finish OrderSolvedActivity
+ *
  * @param <T>
  */
 public class ActivityTaskManager<T> {
-    static ActivityTaskManager activityTaskManager=null;
+    static ActivityTaskManager activityTaskManager = null;
 
     public static ActivityTaskManager newInstance() {
 
@@ -26,8 +28,6 @@ public class ActivityTaskManager<T> {
 
     private List<T> taskList = new ArrayList<>();
 
-   
-
 
     public void setList(T activity) {
         try {
@@ -37,7 +37,7 @@ public class ActivityTaskManager<T> {
         }
     }
 
-    public void delList( ) {
+    public void delList() {
         try {
             taskList.clear();
         } catch (Exception e) {
@@ -48,12 +48,12 @@ public class ActivityTaskManager<T> {
     public void clear() {
         if (taskList.size() > 0) {
             for (T activity : taskList) {
-                if(activity instanceof OrderSolvedActivity){
-                    ((OrderSolvedActivity)activity).finish();
-                }else if(activity instanceof CreateOrderActivity){
-                    ((CreateOrderActivity)activity).finish();
-                }else if(activity instanceof ReNewTemplateActivity){
-                    ((ReNewTemplateActivity)activity).finish();
+                if (activity instanceof OrderSolvedActivity) {
+                    ((OrderSolvedActivity) activity).finish();
+                } else if (activity instanceof CreateOrderActivity) {
+                    ((CreateOrderActivity) activity).finish();
+                } else if (activity instanceof ReNewTemplateActivity) {
+                    ((ReNewTemplateActivity) activity).finish();
                 }
             }
         }

@@ -15,6 +15,7 @@ import com.wisesignsoft.OperationManagement.bean.StractgyBean;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
 import com.wisesignsoft.OperationManagement.ui.activity.CreateOrderActivity;
+import com.wisesignsoft.OperationManagement.ui.activity.CreateTemplateActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.OrderSolvedActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.ReNewTemplateActivity;
 import com.wisesignsoft.OperationManagement.ui.activity.SelectNextStepUserActivity;
@@ -130,6 +131,11 @@ public class ButtonView extends LinearLayout {
     }
 
     private void toNode(NextNode nextNode) {
+        if (getContext() instanceof CreateTemplateActivity) {
+            ((CreateTemplateActivity) getContext()).commit();
+            return;
+        }
+
         String key = null, strategyValue = null;
         StractgyBean bean = null;
         StractgyBean.StrategyValueBean strategyValueBean = null;
@@ -139,7 +145,12 @@ public class ButtonView extends LinearLayout {
             bean = GsonHelper.build().getObjectByJson(strategy, StractgyBean.class);
             key = bean.getStrategyKey();
             strategyValue = bean.getStrategyValue();
-            strategyValueBean = GsonHelper.build().getObjectByJson(strategyValue, StractgyBean.StrategyValueBean.class);
+            /**
+             * 存在json格式；判断原因见 {@link StractgyBean}
+             */
+            if (strategyValue.indexOf("{") > -1) {
+                strategyValueBean = GsonHelper.build().getObjectByJson(strategyValue, StractgyBean.StrategyValueBean.class);
+            }
         }
 
         if (key == null) {
@@ -155,7 +166,7 @@ public class ButtonView extends LinearLayout {
                     ((OrderSolvedActivity) getContext()).commit();
                 } else if (getContext() instanceof ReNewTemplateActivity) {
                     ((ReNewTemplateActivity) getContext()).commit();
-                }else if (getContext() instanceof CreateOrderActivity) {
+                } else if (getContext() instanceof CreateOrderActivity) {
                     ((CreateOrderActivity) getContext()).commit();
                 }
         }

@@ -14,6 +14,7 @@ import com.wisesignsoft.OperationManagement.R;
 import com.wisesignsoft.OperationManagement.adapter.NewWorkOrderAdapter;
 import com.wisesignsoft.OperationManagement.adapter.SingleSelectViewAdapter;
 import com.wisesignsoft.OperationManagement.bean.DictDatasBean;
+import com.wisesignsoft.OperationManagement.bean.VariousOrderBean;
 import com.wisesignsoft.OperationManagement.bean.WorkOrder;
 import com.wisesignsoft.OperationManagement.db.MyCallBack;
 import com.wisesignsoft.OperationManagement.db.WorkOrderDataManager;
@@ -106,6 +107,21 @@ public class SingleSelectView extends LinearLayout implements RealmObjectChangeL
 
     }
 
+    //选择模板类型界面初始化数据
+    public void setDataSelf(String title, List<VariousOrderBean> datas) {
+        if (!TextUtils.isEmpty(title)) {
+            tv_single_select.setText(title);
+        }
+        if (datas != null) {
+            adapterSelf = new NewWorkOrderAdapter(getContext(), datas);
+            rv_single_select.setAdapter(adapterSelf);
+        }
+    }
+
+
+    public int getSelfCurrentPosition() {
+        return adapterSelf.getCurrentPosition();
+    }
 
     @Override
     public void onChange(WorkOrder workOrder, @Nullable ObjectChangeSet changeSet) {

@@ -95,7 +95,7 @@ public class Protocol {
     /*保存工单*/
     public static final String saveProcessSketch = "saveProcessSketch";
     /*创建模板*/
-    public static final String crateTemplet = "crateTemplet";
+    public static final String createTemplet = "crateTemplet";
     //    /*获取我的模板列表*/
 //    public static final String getWoTempletListByUserAccount = "getWoTempletListByUserAccount";
     /*获取我的模板列表-这个是有权限设置的*/

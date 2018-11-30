@@ -15,6 +15,7 @@ import com.wisesignsoft.OperationManagement.bean.SingleResModelListData;
 import com.wisesignsoft.OperationManagement.bean.TaskDetailBean;
 import com.wisesignsoft.OperationManagement.bean.TaskItemBean;
 import com.wisesignsoft.OperationManagement.bean.TaskOrderTrackBean;
+import com.wisesignsoft.OperationManagement.bean.TemplateBean;
 import com.wisesignsoft.OperationManagement.bean.TempletListBean;
 import com.wisesignsoft.OperationManagement.bean.User;
 import com.wisesignsoft.OperationManagement.bean.UserInfofRoleBean;
@@ -220,9 +221,18 @@ public interface ApiService {
     //选择人员列表
     @POST(Protocol.role_host)
     Observable<Response<List<UserInfofRoleBean>>> findUserByRoleId(@Body String requestStr);
+
     //根据工单类型创建新单
     @POST(Protocol.process_host)
     Observable<Response<TaskDetailBean>> createProcessByKeyAndCreator(@Body String requestStr);
+
+    //创建模板数据
+    @POST(Protocol.process_host)
+    Observable<Response<BaseDataResponse<TemplateBean>>> createTemplet(@Body String requestStr);
+
+    //提交模板数据
+    @POST(Protocol.process_host)
+    Observable<Response<BaseResponse>> saveTeplet(@Body String requestStr);
 
 
     class Creator {

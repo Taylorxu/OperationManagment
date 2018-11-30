@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_new_template2"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.wisesignsoft.OperationManagement.mview.MyTitle
+        android:id="@+id/mt_new_template2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.wisesignsoft.OperationManagement.mview.WorkOrderDetailView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/wodv_new_template2"/>
+    <LinearLayout
+        android:id="@+id/ll_new_template"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/home_line"/>
+    </LinearLayout>
+</LinearLayout>
